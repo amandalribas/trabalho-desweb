@@ -4,7 +4,16 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import br.com.desweb.trabalhodesweb.auth.util.Role;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
+@ToString
+@Getter
+@Setter
+@NoArgsConstructor
+@Entity
 public class Usuario {
     //Consideramos a parte de autenticação vista em sala:
     @Id

@@ -71,3 +71,14 @@ export default defineConfig([
   },
 ])
 ```
+
+OBS: COMANDOS DADOS PARA INSTALAÇÃO DO AMBIENTE
+npm create vite@latest frontend  
+npm i
+npm install tailwindcss @tailwindcss/vite
+npm i zustand
+npm i @tanstack/react-query
+npm i react-router-dom
+npm i bootstrap-icons
+npm i react-hook-form
+npm i @hookform/resolvers zod
