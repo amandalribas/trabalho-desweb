@@ -9,7 +9,7 @@ import java.util.Date;
 public class Notificacao {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id_notificacao;
+    private Long id;
 
     private Date data;
     private Evento evento;

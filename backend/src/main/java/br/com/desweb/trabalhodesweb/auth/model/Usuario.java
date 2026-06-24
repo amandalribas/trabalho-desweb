@@ -18,9 +18,6 @@ public class Usuario {
     //Consideramos a parte de autenticação vista em sala:
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id_usuario;
-
-
     private Long id;
 
     @NotEmpty(message = "O 'Nome' deve ser informado.")

@@ -10,17 +10,12 @@ import useEfetuarLogin from "../hooks/auth/useEfetuarLogin";
 import { zodResolver } from "@hookform/resolvers/zod";
 import isErrorResponse from "../util/isErrorResponse";
 
-
 const schema = z.object({
-  email: z
-    .email("Informe um email válido."),
-  senha: z
-    .string()
-    .nonempty("Informe a senha.")
+  email: z.email("Informe um email válido."),
+  senha: z.string().nonempty("Informe a senha."),
 });
 
 type FormLogin = z.infer<typeof schema>;
-
 
 const LoginPage = () => {
   const setTokenResponse = useTokenStore((s) => s.setTokenResponse);
@@ -40,7 +35,11 @@ const LoginPage = () => {
     };
   }, []);
 
-  const { register, handleSubmit, formState: {errors} } = useForm<FormLogin>({resolver: zodResolver(schema)});
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<FormLogin>({ resolver: zodResolver(schema) });
   const { mutate: efetuarLogin } = useEfetuarLogin();
 
   const submit = ({ email, senha }: FormLogin) => {
@@ -58,7 +57,7 @@ const LoginPage = () => {
         if (location.state?.destino) {
           navigate(location.state.destino);
         } else {
-          navigate("/");
+          navigate("/home");
         }
       },
       onError: (error: any) => {
@@ -86,7 +85,7 @@ const LoginPage = () => {
       },
     });
   };
-
+  
   // if (errorEfetuarLogin) throw errorEfetuarLogin;
 
   return (
@@ -120,7 +119,7 @@ const LoginPage = () => {
             <div className="mb-3 rounded border-2 border-red-600 bg-red-100 px-4 py-3 font-bold text-red-800">
               {msg}
             </div>
-          )}	
+          )}
           <form onSubmit={handleSubmit(submit)} className="space-y-4">
             <div>
               <label
@@ -143,10 +142,18 @@ const LoginPage = () => {
                 // id="email"
                 className="w-full rounded-md border-2 border-gray-300 bg-white px-4 py-2 text-gray-900 outline-none hover:border-gray-500"
               />
-              {errors.email && <p style={{color: "red", 
-                                          fontSize: "14px", 
-                                          marginTop: "2px", 
-                                          marginBottom: "0px"}}>{errors.email.message}</p>}
+              {errors.email && (
+                <p
+                  style={{
+                    color: "red",
+                    fontSize: "14px",
+                    marginTop: "2px",
+                    marginBottom: "0px",
+                  }}
+                >
+                  {errors.email.message}
+                </p>
+              )}
             </div>
             <div>
               <label
@@ -164,13 +171,25 @@ const LoginPage = () => {
                 // id="senha"
                 className="w-full rounded-md border-2 border-gray-300 bg-white px-4 py-2 text-gray-900 outline-none hover:border-gray-500"
               />
-              {errors.senha && <p style={{color: "red", 
-                                          fontSize: "14px", 
-                                          marginTop: "2px", 
-                                          marginBottom: "0px"}}>{errors.senha.message}</p>}
+              {errors.senha && (
+                <p
+                  style={{
+                    color: "red",
+                    fontSize: "14px",
+                    marginTop: "2px",
+                    marginBottom: "0px",
+                  }}
+                >
+                  {errors.senha.message}
+                </p>
+              )}
             </div>
             <div className="flex items-center justify-end">
-              <a tabIndex={-1} href="#" className="text-green-600 hover:underline">
+              <a
+                tabIndex={-1}
+                href="#"
+                className="text-green-600 hover:underline"
+              >
                 Esqueceu a senha?
               </a>
             </div>

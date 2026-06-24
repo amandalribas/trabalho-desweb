@@ -55,66 +55,68 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         System.out.println("***************** Executou o método securityFilterChain de SecurityFilterChain");
+
         httpSecurity
                 .sessionManagement(c -> c.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 
-                // Cross Site Request Forgery - Um tipo de ataque utilizado em session based autentication
-                // Em aplicações restful, como este tipo de ataque não acontece, deve ser desabilitado por questão
-                // de desempenho. Na linha abaixo é possível mudar para method reference.
                 .csrf(c -> c.disable())
                 .cors(c -> c.configurationSource(corsConfigurationSource()))
 
+                // Desativa os mecanismos padrão do Spring Security
+                .formLogin(c -> c.disable())
+                .httpBasic(c -> c.disable())
+
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers(HttpMethod.GET, "/produtos/**").permitAll()
 
-                        .requestMatchers(HttpMethod.POST, "/produtos/**").hasAnyRole(Role.USER.name(), Role.ADMIN.name())
-                        .requestMatchers(HttpMethod.PUT, "/produtos/**").hasRole(Role.ADMIN.name())
-                        .requestMatchers(HttpMethod.DELETE, "/produtos/**").hasRole(Role.ADMIN.name())
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
 
-                        // qq usuário pode cadastrar um usuário
+                        // Libera login
+                        .requestMatchers(HttpMethod.POST, "/autenticacao/login").permitAll()
+                        .requestMatchers("/autenticacao/**").permitAll()
+
+                        // Libera cadastro e listagem de usuários por enquanto
                         .requestMatchers(HttpMethod.POST, "/usuarios").permitAll()
                         .requestMatchers(HttpMethod.GET, "/usuarios").permitAll()
 
-                        // qq usuário pode se logar
-                        .requestMatchers(HttpMethod.POST, "/autenticacao/login").permitAll()
+                        // Rotas públicas do sistema
+                        .requestMatchers(HttpMethod.GET, "/jogos/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/times/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/competicoes/**").permitAll()
 
-                        // Para acessar /favoritos é preciso estar logado
-                        //.requestMatchers(HttpMethod.GET,"/favoritos/**").authenticated()
-                        //.requestMatchers(HttpMethod.POST,"/favoritos/**").authenticated()
-                        //.requestMatchers(HttpMethod.DELETE,"/favoritos/**").authenticated())
+                        // Única parte privada por enquanto
+                        .requestMatchers("/admin/**").hasRole(Role.ADMIN.name())
 
-                        .anyRequest().authenticated())
+                        // Todo o resto liberado durante os testes
+                        .anyRequest().permitAll()
+                )
+
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+
                 .exceptionHandling(ex -> {
-                    // Quando o usuário não está logado, por default, é retornado o erro 403 - FORBIDDEN
-                    // Estamos mudando para 401 - UNAUTHORIZED
                     ex.authenticationEntryPoint((request, response, authException) -> {
                         response.setStatus(HttpStatus.UNAUTHORIZED.value());
                         response.setContentType("application/json");
                         response.getWriter().write("""
-                        {
-                            "status": 401,
-                            "message": "Necessario estar autenticado para acessar este recurso."
-                        }
-                        """);
+                    {
+                        "status": 401,
+                        "message": "Necessario estar autenticado para acessar este recurso."
+                    }
+                    """);
                     });
 
-                    // Quando o usuário está autenticado mas não possui o perfil (ROLE) necessário para
-                    // acessar o recurso, por default é retornado o erro 401 - UNAUTHORIZED.
-                    // Estamos mudando para 403 - FORBIDDEN
                     ex.accessDeniedHandler((request, response, accessDeniedException) -> {
                         response.setStatus(HttpStatus.FORBIDDEN.value());
                         response.setContentType("application/json");
                         response.getWriter().write("""
-                        {
-                            "status": 403,
-                            "message": "Voce nao tem permissao para acessar este recurso."
-                        }
-                        """);
+                    {
+                        "status": 403,
+                        "message": "Voce nao tem permissao para acessar este recurso."
+                    }
+                    """);
                     });
                 });
 
-        return httpSecurity.build();  // Cria um objeto SecurityFilterChain.
+        return httpSecurity.build();
     }
 
     @Bean

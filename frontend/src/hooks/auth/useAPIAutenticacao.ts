@@ -8,7 +8,7 @@ const useAPIAutenticacao = () => {
     const response = await fetch(URL + "/login", {
       method: "POST",
       headers: {
-        "Content-type": "Application/json",
+        "Content-type": "application/json",
       },
       body: JSON.stringify(usuarioLogin),
     });

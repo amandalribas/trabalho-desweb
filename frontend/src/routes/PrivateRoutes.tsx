@@ -1,4 +1,4 @@
-import { Navigate, useLocation } from "react-router-dom";
+import { Navigate, Outlet, useLocation } from "react-router-dom";
 import useTokenStore from "../store/TokenStore";
 import Layout from "./Layout";
 
@@ -7,7 +7,7 @@ const PrivateRoutes = () => {
   const location = useLocation();
 
   if (tokenResponse.idUsuario > 0) {
-    return <Layout />
+    return <Outlet />
   }
   else {
     return <Navigate to="/login" state={{destino: location.pathname}} />

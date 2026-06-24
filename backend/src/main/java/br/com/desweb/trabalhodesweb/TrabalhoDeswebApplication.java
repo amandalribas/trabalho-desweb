@@ -26,19 +26,22 @@ public class TrabalhoDeswebApplication implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
 
-        Usuario admin = new Usuario(
-                "Admin",
-                "admin@mail.com",
-                passwordEncoder.encode("desweb"),
-                Role.ADMIN);
-        usuarioRepository.save(admin);
+        if (usuarioRepository.findByEmail("admin@mail.com").isEmpty()) {
+            Usuario admin = new Usuario(
+                    "Admin",
+                    "admin@mail.com",
+                    passwordEncoder.encode("desweb"),
+                    Role.ADMIN);
+            usuarioRepository.save(admin);
+        }
 
-        Usuario user = new Usuario(
-                "User",
-                "user@mail.com",
-                passwordEncoder.encode("desweb"),
-                Role.USER);
-        usuarioRepository.save(user);
+        if (usuarioRepository.findByEmail("user@mail.com").isEmpty()) {
+            Usuario user = new Usuario(
+                    "User",
+                    "user@mail.com",
+                    passwordEncoder.encode("desweb"),
+                    Role.USER);
+            usuarioRepository.save(user);
+        }
     }
-
 }

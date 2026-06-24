@@ -10,7 +10,7 @@ import java.util.List;
 public class Competicao {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id_competicao;
+    private Long id;
 
     private List<Jogo> jogo;
     private List<Time> time;

@@ -7,7 +7,7 @@ import jakarta.persistence.Id;
 public class Time {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id_time;
+    private Long id;
 
     private String nome;
     private String sigla;
