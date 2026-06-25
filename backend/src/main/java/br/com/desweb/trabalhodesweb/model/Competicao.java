@@ -1,5 +1,6 @@
 package br.com.desweb.trabalhodesweb.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,16 +20,18 @@ public class Competicao {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // Mexi e comentei pq não preciso no momento para poder testar a criação do jogo
-    // @OneToMany(mappedBy = "competicao")
-    // @JsonIgnore
-    // private List<Jogo> jogo;
+    private String nome;
 
-    // @ManyToMany
-    // @JoinTable(name = "competicao_time",
-    //     joinColumns = @JoinColumn(name = "competicao_id"),
-    //     inverseJoinColumns = @JoinColumn(name = "time_id"))
-    // private List<Time> time;
+    // Mexi e comentei pq não preciso no momento para poder testar a criação do jogo
+    @OneToMany(mappedBy = "competicao")
+    @JsonIgnore
+    private List<Jogo> jogos;
+
+    @ManyToMany
+    @JoinTable(name = "competicao_time",
+    joinColumns = @JoinColumn(name = "competicao_id"),
+    inverseJoinColumns = @JoinColumn(name = "time_id"))
+    private List<Time> times;
 
     private Date dataInicio;
     private Date dataFim;
