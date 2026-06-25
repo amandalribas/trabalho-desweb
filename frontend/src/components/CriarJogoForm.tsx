@@ -31,8 +31,13 @@ const CriarJogoForm = () => {
   const {
     register,
     handleSubmit,
+    watch, //para poder encontrar o time selecionado e mostrar a foto dele
     formState: { errors },
   } = useForm<FormJogo>({ resolver: zodResolver(schema) });
+
+  const timeAIdSelecionado = watch("timeAId");
+
+  const timeBIdSelecionado = watch("timeBId");
 
   const submit = (dados: FormJogo) => {
     const jogoCreate: JogoCreate = {
@@ -47,89 +52,142 @@ const CriarJogoForm = () => {
     });
   };
 
+  const timeASelecionado = times?.find(
+    (time) => time.id === Number(timeAIdSelecionado),
+  );
+
+  const timeBSelecionado = times?.find(
+    (time) => time.id === Number(timeBIdSelecionado),
+  );
+
   return (
-    <form onSubmit={handleSubmit(submit)} className="space-y-4 max-w-md">
-      <div>
-        <label className="mb-1 block text-sm font-medium text-gray-700">
-          Time A
-        </label>
-        <select {...register("timeAId")} className={inputClass}>
-          <option value={0}>Selecione o Time A</option>
-          {times?.map((time) => (
-            <option key={time.id} value={time.id}>
-              {time.nome}
-            </option>
-          ))}
-        </select>
-        {errors.timeAId && <p className={errorClass}>{errors.timeAId.message}</p>}
-      </div>
+    <form onSubmit={handleSubmit(submit)} className="mt-6">
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+        <div className="form-card">
+          {/*=======coluna time A =============*/}
+          <label className="mb-1 block text-sm font-medium text-gray-700">
+            Time A
+          </label>
+          <select {...register("timeAId")} className={inputClass}>
+            <option value={0}>Selecione o Time A</option>
+            {times?.map((time) => (
+              <option key={time.id} value={time.id}>
+                {" "}
+                {/* pega as opções a partir do array times e mostra os nomes */}
+                {time.nome}
+              </option>
+            ))}
+          </select>
+          {errors.timeAId && (
+            <p className={errorClass}>{errors.timeAId.message}</p>
+          )}
 
-      <div>
-        <label className="mb-1 block text-sm font-medium text-gray-700">
-          Time B
-        </label>
-        <select {...register("timeBId")} className={inputClass}>
-          <option value={0}>Selecione o Time B</option>
-          {times?.map((time) => (
-            <option key={time.id} value={time.id}>
-              {time.nome}
-            </option>
-          ))}
-        </select>
-        {errors.timeBId && <p className={errorClass}>{errors.timeBId.message}</p>}
-      </div>
+          {/* Ao selecionar um time, vai aparecer a foto dele */}
+          <div className="mt-4 flex h-48 w-full items-center justify-center overflow-hidden bg-cinza-background">
+            {timeASelecionado ? (
+              <>
+                <img
+                  src={timeASelecionado.imagem}
+                  className="h-full w-full object-cover"
+                ></img>
+              </>
+            ) : (
+              <></>
+            )}
+          </div>
+        </div>
 
-      <div>
-        <label className="mb-1 block text-sm font-medium text-gray-700">
-          Competição
-        </label>
-        <select {...register("competicaoId")} className={inputClass}>
-          <option value={0}>Selecione a competição</option>
-          {competicoes?.map((c) => (
-            <option key={c.id} value={c.id}>
-              Competição {c.id}
-            </option>
-          ))}
-        </select>
-        {errors.competicaoId && (
-          <p className={errorClass}>{errors.competicaoId.message}</p>
-        )}
-      </div>
+        {/*Propriedades do jogo: */}
+        <div className="py-4">
+          <div>
+            <label className="mb-1 block text-sm font-medium text-gray-700">
+              Competição
+            </label>
+            <select {...register("competicaoId")} className={inputClass}>
+              <option value={0}>Selecione a competição</option>
+              {competicoes?.map((c) => (
+                <option key={c.id} value={c.id}>
+                  Competição {c.id}
+                </option>
+              ))}
+            </select>
+            {errors.competicaoId && (
+              <p className={errorClass}>{errors.competicaoId.message}</p>
+            )}
+          </div>
 
-      <div>
-        <label className="mb-1 block text-sm font-medium text-gray-700">
-          Descrição
-        </label>
-        <input
-          {...register("descricao")}
-          type="text"
-          placeholder="Ex: Fase de grupos"
-          className={inputClass}
-        />
-        {errors.descricao && (
-          <p className={errorClass}>{errors.descricao.message}</p>
-        )}
-      </div>
+          <div>
+            <label className="mb-1 block text-sm font-medium text-gray-700">
+              Descrição
+            </label>
+            <input
+              {...register("descricao")}
+              type="text"
+              placeholder="Ex: Fase de grupos"
+              className={inputClass}
+            />
+            {errors.descricao && (
+              <p className={errorClass}>{errors.descricao.message}</p>
+            )}
+          </div>
 
-      <div>
-        <label className="mb-1 block text-sm font-medium text-gray-700">
-          Local
-        </label>
-        <input
-          {...register("local")}
-          type="text"
-          placeholder="Ex: Maracanã"
-          className={inputClass}
-        />
-        {errors.local && <p className={errorClass}>{errors.local.message}</p>}
-      </div>
+          <div>
+            <label className="mb-1 block text-sm font-medium text-gray-700">
+              Local
+            </label>
+            <input
+              {...register("local")}
+              type="text"
+              placeholder="Ex: Maracanã"
+              className={inputClass}
+            />
+            {errors.local && (
+              <p className={errorClass}>{errors.local.message}</p>
+            )}
+          </div>
+        </div>
+        <div className="form-card">
+          {/*=======coluna time B =============*/}
+          <label className="mb-1 block text-sm font-medium text-gray-700">
+            Time B
+          </label>
+          <select {...register("timeBId")} className={inputClass}>
+            <option value={0}>Selecione o Time B</option>
+            {times?.map((time) => (
+              <option key={time.id} value={time.id}>
+                {" "}
+                {/* pega as opções a partir do array times e mostra os nomes */}
+                {time.nome}
+              </option>
+            ))}
+          </select>
+          {errors.timeAId && (
+            <p className={errorClass}>{errors.timeAId.message}</p>
+          )}
 
-      <button
-        type="submit"
-        className="w-full cursor-pointer rounded-md bg-green-600 py-2 font-semibold text-white duration-200 hover:bg-green-700"
-      >
-        Cadastrar Jogo
-      </button>
+          {/* Ao selecionar um time, vai aparecer a foto dele */}
+          <div className="mt-4 flex h-48 w-full items-center justify-center overflow-hidden  bg-cinza-background">
+            {timeBSelecionado ? (
+              <>
+                <img
+                  src={timeBSelecionado.imagem}
+                  className="h-full w-full object-cover"
+                ></img>
+              </>
+            ) : (
+              <></>
+            )}
+          </div>
+        </div>
+      </div>
+      <div className="mt-10 flex justify-center">
+        <button
+          type="submit"
+          className="w-96 cursor-pointer rounded-md bg-green-600 py-2 font-semibold text-white duration-200 hover:bg-green-700"
+        >
+          Cadastrar Jogo
+        </button>
+      </div>
     </form>
   );
 };

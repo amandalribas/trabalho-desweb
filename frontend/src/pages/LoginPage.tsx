@@ -184,15 +184,7 @@ const LoginPage = () => {
                 </p>
               )}
             </div>
-            <div className="flex items-center justify-end">
-              <a
-                tabIndex={-1}
-                href="#"
-                className="text-green-600 hover:underline"
-              >
-                Esqueceu a senha?
-              </a>
-            </div>
+        
             <button
               type="submit"
               className="w-full cursor-pointer rounded-md bg-green-600 py-2 font-semibold text-white duration-200 hover:bg-green-700"
@@ -204,7 +196,7 @@ const LoginPage = () => {
             <span className="me-1">Não tem conta?</span>
             {/* A âncora tenta ficar na mesma linha - é um inline element */}
             <a href="#" className="text-green-600 hover:underline">
-              Cadastre-se
+              Consulte os usuários padrões no README.md do projeto no GitHub.
             </a>
           </p>
         </div>
