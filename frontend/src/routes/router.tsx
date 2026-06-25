@@ -8,6 +8,9 @@ import LoginPage from "../pages/LoginPage";
 import { NotificacoesPage } from "../pages/NotificacoesPage";
 import PrivateRoutes from "./PrivateRoutes";
 import { AdminPage } from "../pages/AdminPage";
+import CriarJogoPage from "../pages/CriarJogoPage";
+import AtualizarJogoPage from "../pages/AtualizarJogoPage";
+import CriarCompeticaoPage from "../pages/CriarCompeticaoPage";
 
 // O arquivo router.tsx é onde definimos as rotas da aplicação -- baseado no router visto em sala.
 const router = createBrowserRouter([
@@ -22,6 +25,7 @@ const router = createBrowserRouter([
       // - index: true marca essa rota como a padrão do pai.
       // - <Navigate to="/home" replace /> faz o redirecionamento.
       // - replace troca a entrada no histórico (o usuário não volta para / ao apertar “voltar”).
+      //rotas públicas:
       { index: true, element: <Navigate to="/home" replace /> },
       { path: "home", element: <HomePage /> },
       { path: "em-andamento", element: <EmAndamentoPage /> },
@@ -33,10 +37,15 @@ const router = createBrowserRouter([
     ],
   },
   {
+    //rotas privadas:
     path: "/",
     element: <PrivateRoutes />,
     errorElement: <ErrorPage />,
-    children: [{ path: "admin", element: < AdminPage/> }],
+    children: [
+      { path: "admin", element: < AdminPage/> },
+      {path: "criar-jogo", element: <CriarJogoPage/>},
+      {path: "atualizar-jogo", element: <AtualizarJogoPage/>},
+      {path: "criar-competicao", element: <CriarCompeticaoPage/>},],
   },
 ]);
 export default router;

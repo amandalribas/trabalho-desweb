@@ -21,4 +21,6 @@ public class Jogo {
 
     private List<Evento> eventos;
 
+    private String descricao;
+    private String local;
 }

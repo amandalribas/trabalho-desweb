@@ -7,7 +7,7 @@ const PrivateRoutes = () => {
   const location = useLocation();
 
   if (tokenResponse.idUsuario > 0) {
-    return <Outlet />
+    return <Layout />
   }
   else {
     return <Navigate to="/login" state={{destino: location.pathname}} />
