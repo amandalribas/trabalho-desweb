@@ -3,13 +3,17 @@ package br.com.desweb.trabalhodesweb;
 import br.com.desweb.trabalhodesweb.auth.model.Usuario;
 import br.com.desweb.trabalhodesweb.auth.repository.UsuarioRepository;
 import br.com.desweb.trabalhodesweb.auth.util.Role;
+import br.com.desweb.trabalhodesweb.model.Competicao;
 import br.com.desweb.trabalhodesweb.model.Time;
+import br.com.desweb.trabalhodesweb.repository.CompeticaoRepository;
 import br.com.desweb.trabalhodesweb.repository.TimeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.security.crypto.password.PasswordEncoder;
+
+import java.util.Date;
 
 
 
@@ -24,6 +28,9 @@ public class TrabalhoDeswebApplication implements CommandLineRunner {
 
     @Autowired
     private TimeRepository timeRepository;
+
+    @Autowired
+    private CompeticaoRepository competicaoRepository;
 
     private void criarTime(String nome, String sigla, String imagem) {
         if (timeRepository.findBySigla(sigla).isPresent()) {
@@ -61,6 +68,13 @@ public class TrabalhoDeswebApplication implements CommandLineRunner {
                     passwordEncoder.encode("desweb"),
                     Role.USER);
             usuarioRepository.save(user);
+        }
+        //=======================CRIANDO COMPETIÇÕES======================
+        if (competicaoRepository.count() == 0) {
+            Competicao copa = new Competicao();
+            copa.setDataInicio(new Date());
+            copa.setDataFim(new Date());
+            competicaoRepository.save(copa);
         }
         //=======================CRIANDO TIMES======================
         criarTime("BRASIL", "BRA", "/times/brasil.png");

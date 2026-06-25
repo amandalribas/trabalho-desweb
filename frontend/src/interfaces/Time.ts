@@ -1,4 +1,4 @@
-interface Time {
+export interface Time {
   id: number;
   nome: string;
   sigla: string;
