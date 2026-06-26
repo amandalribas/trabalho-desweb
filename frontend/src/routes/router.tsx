@@ -11,6 +11,7 @@ import { AdminPage } from "../pages/AdminPage";
 import CriarJogoPage from "../pages/CriarJogoPage";
 import AtualizarJogoPage from "../pages/AtualizarJogoPage";
 import CriarCompeticaoPage from "../pages/CriarCompeticaoPage";
+import CadastrarTimePage from "../pages/CadastrarTimePage";
 
 // O arquivo router.tsx é onde definimos as rotas da aplicação -- baseado no router visto em sala.
 const router = createBrowserRouter([
@@ -45,7 +46,8 @@ const router = createBrowserRouter([
       { path: "admin", element: < AdminPage/> },
       {path: "criar-jogo", element: <CriarJogoPage/>},
       {path: "atualizar-jogo", element: <AtualizarJogoPage/>},
-      {path: "criar-competicao", element: <CriarCompeticaoPage/>},],
+      {path: "criar-competicao", element: <CriarCompeticaoPage/>},
+      {path: "cadastrar-time", element: <CadastrarTimePage/>}],
   },
 ]);
 export default router;

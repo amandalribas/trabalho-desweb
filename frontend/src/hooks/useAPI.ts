@@ -25,14 +25,19 @@ const useAPI = <T>(endpoint: string) => {
   };
 
   const cadastrar = async (obj: any): Promise<T> => {
-    const response = await fetch(URL, {
-      method: "POST",
-      headers: { "Content-type": "application/json" },
-      body: JSON.stringify(obj),
-    });
-    await handleResponseError(response);
-    return await response.json();
-  };
+  const isFormData = obj instanceof FormData;
+
+  const response = await fetch(URL, {
+    method: "POST",
+    headers: isFormData ? {} : { "Content-type": "application/json" },
+
+    body: isFormData ? obj : JSON.stringify(obj),
+  });
+
+  await handleResponseError(response);
+  return await response.json();
+};
+
 
   const alterar = async (id: number, obj: any): Promise<T> => {
     const response = await fetch(`${URL}/${id}`, {
