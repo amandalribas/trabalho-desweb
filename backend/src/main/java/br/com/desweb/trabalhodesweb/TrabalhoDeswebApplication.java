@@ -13,8 +13,9 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.util.ArrayList;
 import java.util.Date;
-
+import java.util.List;
 
 
 @SpringBootApplication
@@ -58,15 +59,17 @@ public class TrabalhoDeswebApplication implements CommandLineRunner {
                     "Admin",
                     "admin@mail.com",
                     passwordEncoder.encode("desweb"),
-                    Role.ADMIN);
+                    Role.ADMIN,
+                    new java.util.ArrayList<>(java.util.List.of(1L, 4L)));
             usuarioRepository.save(admin);
         }
         if (usuarioRepository.findByEmail("user@mail.com").isEmpty()) {
             Usuario user = new Usuario(
-                    "User",
+                    "eu",
                     "user@mail.com",
                     passwordEncoder.encode("desweb"),
-                    Role.USER);
+                    Role.USER,
+                    new java.util.ArrayList<>(java.util.List.of(2L, 3L)));
             usuarioRepository.save(user);
         }
         //=======================CRIANDO COMPETIÇÕES======================

@@ -5,6 +5,8 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.Data;
 
+import java.util.List;
+
 @Data
 public class UsuarioCreate {
     @NotEmpty(message = "O 'Nome' deve ser informado.")
@@ -16,4 +18,6 @@ public class UsuarioCreate {
 
     @NotEmpty(message = "A 'Senha' deve ser informada.")
     private String senha;
+
+    private List<Long> timesIds;
 }
