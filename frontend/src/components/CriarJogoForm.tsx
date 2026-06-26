@@ -1,4 +1,4 @@
-import { useForm } from "react-hook-form";
+import { useForm, type Resolver } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import z from "zod";
 import { useNavigate } from "react-router-dom";
@@ -33,7 +33,9 @@ const CriarJogoForm = () => {
     handleSubmit,
     watch, //para poder encontrar o time selecionado e mostrar a foto dele
     formState: { errors },
-  } = useForm<FormJogo>({ resolver: zodResolver(schema) });
+  } = useForm<FormJogo>({
+    resolver: zodResolver(schema) as Resolver<FormJogo>,
+  });
 
   const timeAIdSelecionado = watch("timeAId");
 

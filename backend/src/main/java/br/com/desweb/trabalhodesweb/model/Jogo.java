@@ -6,6 +6,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.util.List;
+
 // import java.util.List;
 
 @Entity
@@ -33,9 +35,10 @@ public class Jogo {
     private int placarA;
     private int placarB;
 
-    // Comentei pq não existe o crud de eventos ainda
-    // @OneToMany(mappedBy = "jogo")
-    // private List<Evento> eventos;
+
+    @OneToMany(mappedBy = "jogo")
+    private List<Evento> eventos;
+
 
     private String descricao;
     private String local;
