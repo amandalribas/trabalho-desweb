@@ -26,4 +26,9 @@ public class UsuarioController {
     public InfoUsuario cadastrarUsuario(@RequestBody @Valid UsuarioCreate usuarioCreate) {
         return usuarioService.cadastrarUsuario(usuarioCreate);
     }
+
+    @GetMapping("/{id}/times")
+    public List<Long> recuperarTimesDoUsuario(@PathVariable Long id) {
+        return usuarioService.buscarTimesPorUsuarioId(id);
+    }
 }

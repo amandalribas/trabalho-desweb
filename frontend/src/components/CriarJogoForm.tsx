@@ -55,12 +55,20 @@ const CriarJogoForm = () => {
   };
 
   const timeASelecionado = times?.find(
-    (time) => time.id === Number(timeAIdSelecionado),
+    (time) => String(time.id) === String(timeAIdSelecionado),
   );
 
   const timeBSelecionado = times?.find(
-    (time) => time.id === Number(timeBIdSelecionado),
+    (time) => String(time.id) === String(timeBIdSelecionado),
   );
+
+const obterCaminhoImagem = (caminhoImagem: string | undefined) => {
+  if (!caminhoImagem) return "";
+  if (caminhoImagem.startsWith("http")) return caminhoImagem;
+
+  const nomeArquivoPuro = caminhoImagem.split("/").pop();
+  return `/times/${nomeArquivoPuro}`;
+};
 
   return (
     <form onSubmit={handleSubmit(submit)} className="mt-6">
@@ -89,7 +97,7 @@ const CriarJogoForm = () => {
             {timeASelecionado ? (
               <>
                 <img
-                  src={timeASelecionado.imagem}
+                  src={obterCaminhoImagem(timeASelecionado.imagem)}
                   className="h-full w-full object-cover"
                 ></img>
               </>
@@ -172,7 +180,7 @@ const CriarJogoForm = () => {
             {timeBSelecionado ? (
               <>
                 <img
-                  src={timeBSelecionado.imagem}
+                  src={obterCaminhoImagem(timeBSelecionado.imagem)}
                   className="h-full w-full object-cover"
                 ></img>
               </>

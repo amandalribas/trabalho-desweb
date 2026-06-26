@@ -12,6 +12,7 @@ import CriarJogoPage from "../pages/CriarJogoPage";
 import AtualizarJogoPage from "../pages/AtualizarJogoPage";
 import CriarCompeticaoPage from "../pages/CriarCompeticaoPage";
 import EventosPage from "../pages/EventosPage";
+import CadastrarTimePage from "../pages/CadastrarTimePage";
 
 // O arquivo router.tsx é onde definimos as rotas da aplicação -- baseado no router visto em sala.
 const router = createBrowserRouter([
@@ -32,7 +33,6 @@ const router = createBrowserRouter([
       { path: "em-andamento", element: <EmAndamentoPage /> },
       { path: "meus-times", element: <MeusTimesPage /> },
       { path: "notificacoes", element: <NotificacoesPage /> },
-      { path: "eventos", element: <EventosPage /> },
       { path: "login", element: <LoginPage /> },
       // A página de erro já faz isso
       // {path: "*", element: <h5 className="text-xl text-center mt-3">404 - Página não encontrada</h5>}

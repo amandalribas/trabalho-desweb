@@ -65,6 +65,16 @@ export const Navbar = () => {
                   <i className="bi bi-trophy  me-1"></i>
                   Criar Competição
                 </NavLink>
+
+                <NavLink
+                  className="hidden text-branco-texto hover:text-verde-texto md:block"
+                  aria-current="page"
+                  to="/cadastrar-time"
+                >
+                  <i className="bi bi-shield-plus me-1"></i>
+                  Cad. Times
+                </NavLink>
+
               </>
             ) : (
               <>
@@ -189,6 +199,17 @@ export const Navbar = () => {
                   <i className="bi bi-trophy  me-1"></i>
                   Criar Competição
                 </NavLink>
+
+                <NavLink
+                  className=" text-branco-texto hover:text-verde-texto md:block"
+                  aria-current="page"
+                  to="/cadastrar-times"
+                  onClick={() => setIsOpen(false)}
+                >
+                  <i className="bi bi-shield-plus  me-1"></i>
+                  Cad. Times
+                </NavLink>
+
               </>
             ) : (
               <>
