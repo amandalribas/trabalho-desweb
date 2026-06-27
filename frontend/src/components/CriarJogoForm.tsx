@@ -31,14 +31,13 @@ const CriarJogoForm = () => {
   const {
     register,
     handleSubmit,
-    watch, //para poder encontrar o time selecionado e mostrar a foto dele
+    watch,
     formState: { errors },
   } = useForm<FormJogo>({
     resolver: zodResolver(schema) as Resolver<FormJogo>,
   });
 
   const timeAIdSelecionado = watch("timeAId");
-
   const timeBIdSelecionado = watch("timeBId");
 
   const submit = (dados: FormJogo) => {
@@ -55,26 +54,17 @@ const CriarJogoForm = () => {
   };
 
   const timeASelecionado = times?.find(
-    (time) => String(time.id) === String(timeAIdSelecionado),
+    (time) => time.id === Number(timeAIdSelecionado)
   );
-
   const timeBSelecionado = times?.find(
-    (time) => String(time.id) === String(timeBIdSelecionado),
+    (time) => time.id === Number(timeBIdSelecionado)
   );
-
-const obterCaminhoImagem = (caminhoImagem: string | undefined) => {
-  if (!caminhoImagem) return "";
-  if (caminhoImagem.startsWith("http")) return caminhoImagem;
-
-  const nomeArquivoPuro = caminhoImagem.split("/").pop();
-  return `/times/${nomeArquivoPuro}`;
-};
 
   return (
     <form onSubmit={handleSubmit(submit)} className="mt-6">
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+        {/* Time A */}
         <div className="form-card">
-          {/*=======coluna time A =============*/}
           <label className="mb-1 block text-sm font-medium text-gray-700">
             Time A
           </label>
@@ -82,8 +72,6 @@ const obterCaminhoImagem = (caminhoImagem: string | undefined) => {
             <option value={0}>Selecione o Time A</option>
             {times?.map((time) => (
               <option key={time.id} value={time.id}>
-                {" "}
-                {/* pega as opções a partir do array times e mostra os nomes */}
                 {time.nome}
               </option>
             ))}
@@ -91,25 +79,19 @@ const obterCaminhoImagem = (caminhoImagem: string | undefined) => {
           {errors.timeAId && (
             <p className={errorClass}>{errors.timeAId.message}</p>
           )}
-
-          {/* Ao selecionar um time, vai aparecer a foto dele */}
           <div className="mt-4 flex h-48 w-full items-center justify-center overflow-hidden bg-cinza-background">
-            {timeASelecionado ? (
-              <>
-                <img
-                  src={obterCaminhoImagem(timeASelecionado.imagem)}
-                  className="h-full w-full object-cover"
-                ></img>
-              </>
-            ) : (
-              <></>
+            {timeASelecionado && (
+              <img
+                src={timeASelecionado.imagem}
+                className="h-full w-full object-cover"
+              />
             )}
           </div>
         </div>
 
-        {/*Propriedades do jogo: */}
+        {/* Dados do jogo */}
         <div className="py-4">
-          <div>
+          <div className="mb-3">
             <label className="mb-1 block text-sm font-medium text-gray-700">
               Competição
             </label>
@@ -125,8 +107,7 @@ const obterCaminhoImagem = (caminhoImagem: string | undefined) => {
               <p className={errorClass}>{errors.competicaoId.message}</p>
             )}
           </div>
-
-          <div>
+          <div className="mb-3">
             <label className="mb-1 block text-sm font-medium text-gray-700">
               Descrição
             </label>
@@ -140,7 +121,6 @@ const obterCaminhoImagem = (caminhoImagem: string | undefined) => {
               <p className={errorClass}>{errors.descricao.message}</p>
             )}
           </div>
-
           <div>
             <label className="mb-1 block text-sm font-medium text-gray-700">
               Local
@@ -156,8 +136,9 @@ const obterCaminhoImagem = (caminhoImagem: string | undefined) => {
             )}
           </div>
         </div>
+
+        {/* Time B */}
         <div className="form-card">
-          {/*=======coluna time B =============*/}
           <label className="mb-1 block text-sm font-medium text-gray-700">
             Time B
           </label>
@@ -165,31 +146,24 @@ const obterCaminhoImagem = (caminhoImagem: string | undefined) => {
             <option value={0}>Selecione o Time B</option>
             {times?.map((time) => (
               <option key={time.id} value={time.id}>
-                {" "}
-                {/* pega as opções a partir do array times e mostra os nomes */}
                 {time.nome}
               </option>
             ))}
           </select>
-          {errors.timeAId && (
-            <p className={errorClass}>{errors.timeAId.message}</p>
+          {errors.timeBId && (
+            <p className={errorClass}>{errors.timeBId.message}</p>
           )}
-
-          {/* Ao selecionar um time, vai aparecer a foto dele */}
-          <div className="mt-4 flex h-48 w-full items-center justify-center overflow-hidden  bg-cinza-background">
-            {timeBSelecionado ? (
-              <>
-                <img
-                  src={obterCaminhoImagem(timeBSelecionado.imagem)}
-                  className="h-full w-full object-cover"
-                ></img>
-              </>
-            ) : (
-              <></>
+          <div className="mt-4 flex h-48 w-full items-center justify-center overflow-hidden bg-cinza-background">
+            {timeBSelecionado && (
+              <img
+                src={timeBSelecionado.imagem}
+                className="h-full w-full object-cover"
+              />
             )}
           </div>
         </div>
       </div>
+
       <div className="mt-10 flex justify-center">
         <button
           type="submit"

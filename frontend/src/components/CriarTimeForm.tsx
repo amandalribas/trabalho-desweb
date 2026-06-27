@@ -3,7 +3,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import z from "zod";
 import { useNavigate } from "react-router-dom";
 import useCriarTime from "../hooks/time/useCriarTime";
-import type { TimeCreate } from "../interfaces/TimeCreate";
 
 const schema = z.object({
   nome: z.string().nonempty("Informe o nome."),

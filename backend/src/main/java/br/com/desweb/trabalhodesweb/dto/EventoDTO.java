@@ -6,6 +6,7 @@ public record EventoDTO(
         Long id,
         TipoEvento tipoEvento,
         String jogador,
+        Integer minuto,
         Long jogoId,
         String jogoDescricao,
         Long timeId,

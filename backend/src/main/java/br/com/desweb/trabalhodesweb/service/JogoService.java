@@ -1,10 +1,14 @@
 package br.com.desweb.trabalhodesweb.service;
 
+import br.com.desweb.trabalhodesweb.dto.EventoCreate;
+import br.com.desweb.trabalhodesweb.dto.EventoDTO;
 import br.com.desweb.trabalhodesweb.dto.JogoCreate;
-import br.com.desweb.trabalhodesweb.model.Competicao;
-import br.com.desweb.trabalhodesweb.model.Jogo;
-import br.com.desweb.trabalhodesweb.model.Time;
+import br.com.desweb.trabalhodesweb.dto.JogoDTO;
+import br.com.desweb.trabalhodesweb.mapper.EventoMapper;
+import br.com.desweb.trabalhodesweb.mapper.JogoMapper;
+import br.com.desweb.trabalhodesweb.model.*;
 import br.com.desweb.trabalhodesweb.repository.CompeticaoRepository;
+import br.com.desweb.trabalhodesweb.repository.EventoRepository;
 import br.com.desweb.trabalhodesweb.repository.JogoRepository;
 import br.com.desweb.trabalhodesweb.repository.TimeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +16,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.Instant;
 import java.util.List;
 
 @Service
@@ -19,29 +24,30 @@ public class JogoService {
 
     @Autowired
     private JogoRepository jogoRepository;
-
     @Autowired
     private TimeRepository timeRepository;
-
     @Autowired
     private CompeticaoRepository competicaoRepository;
+    @Autowired
+    private EventoRepository eventoRepository;
+    @Autowired
+    private JogoMapper jogoMapper;
+    @Autowired
+    private EventoMapper eventoMapper;
 
-    public List<Jogo> listarJogos() {
-        return jogoRepository.findAll();
+    public List<JogoDTO> listarJogos() {
+        return jogoMapper.toJogosDTO(jogoRepository.findAll());
     }
 
-    public Jogo buscarJogoPorId(Long id) {
-        return jogoRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Jogo não encontrado"));
+    public JogoDTO buscarJogoPorId(Long id) {
+        return jogoMapper.toJogoDTO(encontrarJogo(id));
     }
 
-    public Jogo criarJogo(JogoCreate jogoCreate) {
+    public JogoDTO criarJogo(JogoCreate jogoCreate) {
         Time timeA = timeRepository.findById(jogoCreate.timeAId())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Time A não encontrado"));
-
         Time timeB = timeRepository.findById(jogoCreate.timeBId())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Time B não encontrado"));
-
         Competicao competicao = competicaoRepository.findById(jogoCreate.competicaoId())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Competição não encontrada"));
 
@@ -51,20 +57,17 @@ public class JogoService {
         jogo.setCompeticao(competicao);
         jogo.setDescricao(jogoCreate.descricao());
         jogo.setLocal(jogoCreate.local());
+        jogo.setStatus(StatusJogo.AGUARDANDO);
 
-        return jogoRepository.save(jogo);
+        return jogoMapper.toJogoDTO(jogoRepository.save(jogo));
     }
 
-    // essa daqui não faz sentido sem os eventos(é a mesma coisa do criarJogo), não sei ainda como vai ser a atualização de um jogo
-    public Jogo atualizarJogo(Long id, JogoCreate jogoCreate) {
-        Jogo jogo = buscarJogoPorId(id);
-
+    public JogoDTO atualizarJogo(Long id, JogoCreate jogoCreate) {
+        Jogo jogo = encontrarJogo(id);
         Time timeA = timeRepository.findById(jogoCreate.timeAId())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Time A não encontrado"));
-
         Time timeB = timeRepository.findById(jogoCreate.timeBId())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Time B não encontrado"));
-
         Competicao competicao = competicaoRepository.findById(jogoCreate.competicaoId())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Competição não encontrada"));
 
@@ -74,11 +77,99 @@ public class JogoService {
         jogo.setDescricao(jogoCreate.descricao());
         jogo.setLocal(jogoCreate.local());
 
-        return jogoRepository.save(jogo);
+        return jogoMapper.toJogoDTO(jogoRepository.save(jogo));
     }
 
     public void deletarJogo(Long id) {
-        buscarJogoPorId(id);
+        encontrarJogo(id);
         jogoRepository.deleteById(id);
+    }
+
+    public JogoDTO iniciarJogo(Long id) {
+        Jogo jogo = encontrarJogo(id);
+        if (jogo.getStatus() != StatusJogo.AGUARDANDO && jogo.getStatus() != StatusJogo.INTERVALO) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Jogo não pode ser iniciado neste estado.");
+        }
+        if (jogo.getIniciadoEm() == null) {
+            jogo.setIniciadoEm(Instant.now());
+        }
+        jogo.setStatus(StatusJogo.EM_ANDAMENTO);
+        criarEventoInterno(jogo, TipoEvento.INICIO);
+        return jogoMapper.toJogoDTO(jogoRepository.save(jogo));
+    }
+
+    public JogoDTO iniciarIntervalo(Long id) {
+        Jogo jogo = encontrarJogo(id);
+        if (jogo.getStatus() != StatusJogo.EM_ANDAMENTO) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Jogo precisa estar em andamento.");
+        }
+        jogo.setStatus(StatusJogo.INTERVALO);
+        criarEventoInterno(jogo, TipoEvento.INTERVALO);
+        return jogoMapper.toJogoDTO(jogoRepository.save(jogo));
+    }
+
+    public JogoDTO encerrarJogo(Long id) {
+        Jogo jogo = encontrarJogo(id);
+        if (jogo.getStatus() == StatusJogo.ENCERRADO) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Jogo já encerrado.");
+        }
+        jogo.setStatus(StatusJogo.ENCERRADO);
+        criarEventoInterno(jogo, TipoEvento.FIM);
+        return jogoMapper.toJogoDTO(jogoRepository.save(jogo));
+    }
+
+    public EventoDTO adicionarEvento(Long jogoId, EventoCreate eventoCreate) {
+        Jogo jogo = encontrarJogo(jogoId);
+        if (jogo.getStatus() != StatusJogo.EM_ANDAMENTO) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Só é possível adicionar eventos com o jogo em andamento.");
+        }
+        Time time = timeRepository.findById(eventoCreate.timeId())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Time não encontrado"));
+
+        Evento evento = new Evento();
+        evento.setTipoEvento(eventoCreate.tipoEvento());
+        evento.setJogador(eventoCreate.jogador());
+        evento.setJogo(jogo);
+        evento.setTime(time);
+        evento.setMinuto(calcularMinuto(jogo));
+
+        // Atualizar placar se for gol
+        if (eventoCreate.tipoEvento() == TipoEvento.GOL) {
+            if (time.getId().equals(jogo.getTimeA().getId())) {
+                jogo.setPlacarA(jogo.getPlacarA() + 1);
+            } else {
+                jogo.setPlacarB(jogo.getPlacarB() + 1);
+            }
+            jogoRepository.save(jogo);
+        } else if (eventoCreate.tipoEvento() == TipoEvento.GOL_CONTRA) {
+            // Gol contra: marca para o time adversário
+            if (time.getId().equals(jogo.getTimeA().getId())) {
+                jogo.setPlacarB(jogo.getPlacarB() + 1);
+            } else {
+                jogo.setPlacarA(jogo.getPlacarA() + 1);
+            }
+            jogoRepository.save(jogo);
+        }
+
+        return eventoMapper.toEventoDTO(eventoRepository.save(evento));
+    }
+
+    private Jogo encontrarJogo(Long id) {
+        return jogoRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Jogo não encontrado"));
+    }
+
+    private void criarEventoInterno(Jogo jogo, TipoEvento tipo) {
+        Evento evento = new Evento();
+        evento.setTipoEvento(tipo);
+        evento.setJogo(jogo);
+        evento.setMinuto(calcularMinuto(jogo));
+        eventoRepository.save(evento);
+    }
+
+    private int calcularMinuto(Jogo jogo) {
+        if (jogo.getIniciadoEm() == null) return 0;
+        long segundos = Instant.now().getEpochSecond() - jogo.getIniciadoEm().getEpochSecond();
+        return (int) (segundos / 60);
     }
 }

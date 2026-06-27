@@ -113,7 +113,7 @@ const GerenciarEventosPage = () => {
                   <option value={0}>Selecione o jogo</option>
                   {jogos?.map((jogo) => (
                     <option key={jogo.id} value={jogo.id}>
-                      {jogo.timeA.nome} x {jogo.timeB.nome} — {jogo.descricao}
+                      {jogo.timeANome} x {jogo.timeBNome} — {jogo.descricao}
                     </option>
                   ))}
                 </select>
@@ -210,7 +210,7 @@ const GerenciarEventosPage = () => {
             {eventos.map((evento) => (
               <tr
                 key={evento.id}
-                className={'border-b ' + (eventoEditando?.id === evento.id ? "bg-blue-50" : "")}
+                className={`border-b ${eventoEditando?.id === evento.id ? "bg-blue-50" : ""}`}
               >
                 <td className="p-2">{evento.id}</td>
                 <td className="p-2">{evento.tipoEvento.replace("_", " ")}</td>

@@ -72,7 +72,7 @@ const CriarEventoForm = () => {
             <option value={0}>Selecione o jogo</option>
             {jogos?.map((jogo) => (
               <option key={jogo.id} value={jogo.id}>
-                {jogo.timeA.nome} x {jogo.timeB.nome} — {jogo.descricao}
+                {jogo.timeANome} x {jogo.timeBNome} — {jogo.descricao}
               </option>
             ))}
           </select>

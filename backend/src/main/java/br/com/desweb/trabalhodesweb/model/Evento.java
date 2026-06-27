@@ -27,4 +27,6 @@ public class Evento {
     private Jogo jogo;
 
     private String jogador;
+
+    private Integer minuto;
 }
