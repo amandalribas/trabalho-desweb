@@ -36,21 +36,21 @@ public class JogoService {
     }
 
     public Jogo criarJogo(JogoCreate jogoCreate) {
-        Time timeA = timeRepository.findById(jogoCreate.getTimeAId())
+        Time timeA = timeRepository.findById(jogoCreate.timeAId())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Time A não encontrado"));
 
-        Time timeB = timeRepository.findById(jogoCreate.getTimeBId())
+        Time timeB = timeRepository.findById(jogoCreate.timeBId())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Time B não encontrado"));
 
-        Competicao competicao = competicaoRepository.findById(jogoCreate.getCompeticaoId())
+        Competicao competicao = competicaoRepository.findById(jogoCreate.competicaoId())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Competição não encontrada"));
 
         Jogo jogo = new Jogo();
         jogo.setTimeA(timeA);
         jogo.setTimeB(timeB);
         jogo.setCompeticao(competicao);
-        jogo.setDescricao(jogoCreate.getDescricao());
-        jogo.setLocal(jogoCreate.getLocal());
+        jogo.setDescricao(jogoCreate.descricao());
+        jogo.setLocal(jogoCreate.local());
 
         return jogoRepository.save(jogo);
     }
@@ -59,20 +59,20 @@ public class JogoService {
     public Jogo atualizarJogo(Long id, JogoCreate jogoCreate) {
         Jogo jogo = buscarJogoPorId(id);
 
-        Time timeA = timeRepository.findById(jogoCreate.getTimeAId())
+        Time timeA = timeRepository.findById(jogoCreate.timeAId())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Time A não encontrado"));
 
-        Time timeB = timeRepository.findById(jogoCreate.getTimeBId())
+        Time timeB = timeRepository.findById(jogoCreate.timeBId())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Time B não encontrado"));
 
-        Competicao competicao = competicaoRepository.findById(jogoCreate.getCompeticaoId())
+        Competicao competicao = competicaoRepository.findById(jogoCreate.competicaoId())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Competição não encontrada"));
 
         jogo.setTimeA(timeA);
         jogo.setTimeB(timeB);
         jogo.setCompeticao(competicao);
-        jogo.setDescricao(jogoCreate.getDescricao());
-        jogo.setLocal(jogoCreate.getLocal());
+        jogo.setDescricao(jogoCreate.descricao());
+        jogo.setLocal(jogoCreate.local());
 
         return jogoRepository.save(jogo);
     }

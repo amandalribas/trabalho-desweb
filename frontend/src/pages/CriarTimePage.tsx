@@ -1,6 +1,6 @@
-import CriarTimeForm from "../components/CadastrarTimeForm";
+import CriarTimeForm from "../components/CriarTimeForm";
 
-const CadastrarTimePage = () => {
+const CriarTimePage = () => {
   return (
     <>
       <h1 className="mb-1 text-xl font-semibold">Cadastro de Time</h1>
@@ -10,4 +10,4 @@ const CadastrarTimePage = () => {
     </>
   );
 }
-export default CadastrarTimePage
+export default CriarTimePage;

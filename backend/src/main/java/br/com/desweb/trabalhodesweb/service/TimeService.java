@@ -8,7 +8,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class TimeService {
@@ -20,29 +25,29 @@ public class TimeService {
 
     public Time criarTime(TimeCreate timeCreate) {
         Time time = new Time();
-        time.setNome(timeCreate.getNome());
-        time.setSigla(timeCreate.getSigla());
+        time.setNome(timeCreate.nome());
+        time.setSigla(timeCreate.sigla());
 
-        if (timeCreate.getImagem() != null && !timeCreate.getImagem().isEmpty()) {
+        if (timeCreate.imagem() != null && !timeCreate.imagem().isEmpty()) {
             try {
-                if (!java.nio.file.Files.exists(pastaUpload)) {
-                    java.nio.file.Files.createDirectories(pastaUpload);
+                if (!Files.exists(pastaUpload)) {
+                    Files.createDirectories(pastaUpload);
                 }
 
-                String nomeOriginal = timeCreate.getImagem().getOriginalFilename();
+                String nomeOriginal = timeCreate.imagem().getOriginalFilename();
                 String extensao = nomeOriginal.substring(nomeOriginal.lastIndexOf("."));
-                String novoNomeArquivo = java.util.UUID.randomUUID().toString() + extensao;
+                String novoNomeArquivo = UUID.randomUUID().toString() + extensao;
 
-                java.nio.file.Path caminhoCompleto = pastaUpload.resolve(novoNomeArquivo);
+                Path caminhoCompleto = pastaUpload.resolve(novoNomeArquivo);
 
-                java.nio.file.Files.copy(timeCreate.getImagem().getInputStream(), caminhoCompleto, java.nio.file.StandardCopyOption.REPLACE_EXISTING);
+                Files.copy(timeCreate.imagem().getInputStream(), caminhoCompleto, StandardCopyOption.REPLACE_EXISTING);
 
                 String urlDaImagem = "http://localhost:8080/uploads/" + novoNomeArquivo;
                 time.setImagem(urlDaImagem);
 
-            } catch (java.io.IOException e) {
-                throw new org.springframework.web.server.ResponseStatusException(
-                        org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR, "Erro ao salvar a imagem", e
+            } catch (IOException e) {
+                throw new ResponseStatusException(
+                        HttpStatus.INTERNAL_SERVER_ERROR, "Erro ao salvar a imagem", e
                 );
             }
         }
@@ -58,28 +63,28 @@ public class TimeService {
     public Time atualizarTime(Long id, TimeCreate timeCreate) {
         Time time = buscarTimePorId(id);
 
-        time.setNome(timeCreate.getNome());
-        time.setSigla(timeCreate.getSigla());
+        time.setNome(timeCreate.nome());
+        time.setSigla(timeCreate.sigla());
 
-        if (timeCreate.getImagem() != null && !timeCreate.getImagem().isEmpty()) {
+        if (timeCreate.imagem() != null && !timeCreate.imagem().isEmpty()) {
             try {
-                if (!java.nio.file.Files.exists(pastaUpload)) {
-                    java.nio.file.Files.createDirectories(pastaUpload);
+                if (!Files.exists(pastaUpload)) {
+                    Files.createDirectories(pastaUpload);
                 }
 
-                String nomeOriginal = timeCreate.getImagem().getOriginalFilename();
+                String nomeOriginal = timeCreate.imagem().getOriginalFilename();
                 String extensao = nomeOriginal.substring(nomeOriginal.lastIndexOf("."));
-                String novoNomeArquivo = java.util.UUID.randomUUID().toString() + extensao;
+                String novoNomeArquivo = UUID.randomUUID().toString() + extensao;
 
-                java.nio.file.Path caminhoCompleto = pastaUpload.resolve(novoNomeArquivo);
-                java.nio.file.Files.copy(timeCreate.getImagem().getInputStream(), caminhoCompleto, java.nio.file.StandardCopyOption.REPLACE_EXISTING);
+                Path caminhoCompleto = pastaUpload.resolve(novoNomeArquivo);
+                Files.copy(timeCreate.imagem().getInputStream(), caminhoCompleto, StandardCopyOption.REPLACE_EXISTING);
 
                 String urlDaImagem = "http://localhost:8080/uploads/" + novoNomeArquivo;
                 time.setImagem(urlDaImagem);
 
-            } catch (java.io.IOException e) {
-                throw new org.springframework.web.server.ResponseStatusException(
-                        org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR, "Erro ao atualizar a imagem", e
+            } catch (IOException e) {
+                throw new ResponseStatusException(
+                        HttpStatus.INTERNAL_SERVER_ERROR, "Erro ao atualizar a imagem", e
                 );
             }
         }

@@ -69,10 +69,10 @@ export const Navbar = () => {
                 <NavLink
                   className="hidden text-branco-texto hover:text-verde-texto md:block"
                   aria-current="page"
-                  to="/cadastrar-time"
+                  to="/criar-time"
                 >
                   <i className="bi bi-shield-plus me-1"></i>
-                  Cad. Times
+                  Criar Times
                 </NavLink>
 
               </>

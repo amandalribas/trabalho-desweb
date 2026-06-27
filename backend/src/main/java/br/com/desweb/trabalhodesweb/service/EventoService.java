@@ -46,15 +46,15 @@ public class EventoService {
     }
 
     public EventoDTO criarEvento(EventoCreate eventoCreate) {
-        Jogo jogo = jogoRepository.findById(eventoCreate.getJogoId())
+        Jogo jogo = jogoRepository.findById(eventoCreate.jogoId())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Jogo não encontrado"));
 
-        Time time = timeRepository.findById(eventoCreate.getTimeId())
+        Time time = timeRepository.findById(eventoCreate.timeId())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Time não encontrado"));
 
         Evento evento = new Evento();
-        evento.setTipoEvento(eventoCreate.getTipoEvento());
-        evento.setJogador(eventoCreate.getJogador());
+        evento.setTipoEvento(eventoCreate.tipoEvento());
+        evento.setJogador(eventoCreate.jogador());
         evento.setJogo(jogo);
         evento.setTime(time);
 
@@ -65,14 +65,14 @@ public class EventoService {
         Evento evento = eventoRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Evento não encontrado"));
 
-        Jogo jogo = jogoRepository.findById(eventoCreate.getJogoId())
+        Jogo jogo = jogoRepository.findById(eventoCreate.jogoId())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Jogo não encontrado"));
 
-        Time time = timeRepository.findById(eventoCreate.getTimeId())
+        Time time = timeRepository.findById(eventoCreate.timeId())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Time não encontrado"));
 
-        evento.setTipoEvento(eventoCreate.getTipoEvento());
-        evento.setJogador(eventoCreate.getJogador());
+        evento.setTipoEvento(eventoCreate.tipoEvento());
+        evento.setJogador(eventoCreate.jogador());
         evento.setJogo(jogo);
         evento.setTime(time);
 
