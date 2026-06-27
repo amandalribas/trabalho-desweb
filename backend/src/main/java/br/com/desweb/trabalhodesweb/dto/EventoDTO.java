@@ -9,6 +9,10 @@ public record EventoDTO(
         Integer minuto,
         Long jogoId,
         String jogoDescricao,
+        int placarA,
+        int placarB,
+        String timeANome,
+        String timeBNome,
         Long timeId,
         String timeNome
 ) {}

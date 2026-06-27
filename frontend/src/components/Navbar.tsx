@@ -2,6 +2,7 @@ import "bootstrap-icons/font/bootstrap-icons.min.css";
 import { useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
 import useTokenStore from "../store/TokenStore";
+import useNotificacaoStore from "../store/NotificacaoStore";
 import logo from "../assets/logo-fut.png";
 import { Client } from "@stomp/stompjs";
 
@@ -13,32 +14,29 @@ export const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const tokenResponse = useTokenStore((s) => s.tokenResponse);
   const [naoLidas, setNaoLidas] = useState(0);
-
+  const addNotificacao = useNotificacaoStore((s) => s.addNotificacao);
 
   //ESCUTAR RABBITMQ VIA WEBSOCKET EM SEGUNDO PLANO
   useEffect(() => {
-    const socket = new SockJS("http://localhost:8080/ws-server"); 
-    
+    const socket = new SockJS("http://localhost:8080/ws-server");
+
     const stompClient = new Client({
       webSocketFactory: () => socket,
       reconnectDelay: 5000,
       onConnect: () => {
         console.log("Conectou ao webSocket pelo react");
 
-        // Se inscreve na fila
-        stompClient.subscribe("/canalBack/eventos", (message) => {
+        stompClient.subscribe("/CanalBack/notificacoes", (message) => {
           if (message.body) {
-            
-            setNaoLidas((prev) => prev + 1);
-
             const evento = JSON.parse(message.body);
-            alert(`Lance importante no jogo: ${evento.descricao || evento}`);
+            setNaoLidas((prev) => prev + 1);
+            addNotificacao(evento);
           }
         });
       },
       onStompError: (frame) => {
         console.error("Erro STOMP:", frame.headers["message"]);
-      }
+      },
     });
 
     stompClient.activate();
@@ -46,7 +44,7 @@ export const Navbar = () => {
     return () => {
       if (stompClient) stompClient.deactivate();
     };
-  }, []);
+  }, [addNotificacao]);
 
   return (
     <nav className="bg-amarelo-background mb-6 py-4">

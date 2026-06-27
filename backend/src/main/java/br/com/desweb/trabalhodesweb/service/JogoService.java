@@ -1,5 +1,6 @@
 package br.com.desweb.trabalhodesweb.service;
 
+import br.com.desweb.trabalhodesweb.config.RabbitMQConfig;
 import br.com.desweb.trabalhodesweb.dto.EventoCreate;
 import br.com.desweb.trabalhodesweb.dto.EventoDTO;
 import br.com.desweb.trabalhodesweb.dto.JogoCreate;
@@ -11,6 +12,7 @@ import br.com.desweb.trabalhodesweb.repository.CompeticaoRepository;
 import br.com.desweb.trabalhodesweb.repository.EventoRepository;
 import br.com.desweb.trabalhodesweb.repository.JogoRepository;
 import br.com.desweb.trabalhodesweb.repository.TimeRepository;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -34,6 +36,8 @@ public class JogoService {
     private JogoMapper jogoMapper;
     @Autowired
     private EventoMapper eventoMapper;
+    @Autowired
+    private RabbitTemplate rabbitTemplate;
 
     public List<JogoDTO> listarJogos() {
         return jogoMapper.toJogosDTO(jogoRepository.findAll());
@@ -151,7 +155,9 @@ public class JogoService {
             jogoRepository.save(jogo);
         }
 
-        return eventoMapper.toEventoDTO(eventoRepository.save(evento));
+        EventoDTO eventoDTO = eventoMapper.toEventoDTO(eventoRepository.save(evento));
+        rabbitTemplate.convertAndSend(RabbitMQConfig.EXCHANGE_EVENTOS, "eventos", eventoDTO);
+        return eventoDTO;
     }
 
     private Jogo encontrarJogo(Long id) {
@@ -164,7 +170,8 @@ public class JogoService {
         evento.setTipoEvento(tipo);
         evento.setJogo(jogo);
         evento.setMinuto(calcularMinuto(jogo));
-        eventoRepository.save(evento);
+        EventoDTO eventoDTO = eventoMapper.toEventoDTO(eventoRepository.save(evento));
+        rabbitTemplate.convertAndSend(RabbitMQConfig.EXCHANGE_EVENTOS, "eventos", eventoDTO);
     }
 
     private int calcularMinuto(Jogo jogo) {
