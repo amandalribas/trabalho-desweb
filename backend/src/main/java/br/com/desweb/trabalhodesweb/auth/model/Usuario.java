@@ -9,6 +9,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.util.ArrayList;
+
 @ToString
 @Getter
 @Setter
@@ -34,10 +36,19 @@ public class Usuario {
     @Enumerated(EnumType.STRING)
     private Role role = Role.USER;
 
-    public Usuario(String nome, String email, String senha, Role role) {
+    @ElementCollection(fetch = FetchType.LAZY)
+    @CollectionTable(
+            name = "usuario_times",
+            joinColumns = @JoinColumn(name = "usuario_id")
+    )
+    @Column(name = "time_id") //
+    private java.util.List<Long> timesIds = new java.util.ArrayList<>();
+
+    public Usuario(String nome, String email, String senha, Role role, ArrayList<Long> timesIds) {
         this.nome = nome;
         this.email = email;
         this.senha = senha;
         this.role = role;
+        this.timesIds = new java.util.ArrayList<>(timesIds);;
     }
 }

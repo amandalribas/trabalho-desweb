@@ -7,11 +7,11 @@ import lombok.Data;
 import java.util.Date;
 import java.util.List;
 
-@Data
-public class CompeticaoCreate {
-    private String nome;
-    private List<Long> jogosIds;
-    private List<Long> timesIds;
-    private Date dataInicio;
-    private Date dataFim;
+public record CompeticaoCreate (
+    String nome,
+    List<Long> jogosIds,
+    List<Long> timesIds,
+    Date dataInicio,
+    Date dataFim
+) {
 }

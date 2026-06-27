@@ -1,4 +1,4 @@
-import { Navigate, Outlet, useLocation } from "react-router-dom";
+import { Navigate, useLocation } from "react-router-dom";
 import useTokenStore from "../store/TokenStore";
 import Layout from "./Layout";
 

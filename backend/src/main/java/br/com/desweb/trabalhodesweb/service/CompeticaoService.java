@@ -37,18 +37,18 @@ public class CompeticaoService {
     public Competicao criarCompeticao(CompeticaoCreate competicaoCreate){
 
         Competicao competicao = new Competicao();
-        competicao.setNome(competicaoCreate.getNome());
-        competicao.setDataInicio(competicaoCreate.getDataInicio());
-        competicao.setDataFim(competicaoCreate.getDataFim());
+        competicao.setNome(competicaoCreate.nome());
+        competicao.setDataInicio(competicaoCreate.dataInicio());
+        competicao.setDataFim(competicaoCreate.dataFim());
 
 
-        if (competicaoCreate.getTimesIds() != null && !competicaoCreate.getTimesIds().isEmpty()){
-            List<Time> times = timeRepository.findAllById(competicaoCreate.getTimesIds());
+        if (competicaoCreate.timesIds() != null && !competicaoCreate.timesIds().isEmpty()){
+            List<Time> times = timeRepository.findAllById(competicaoCreate.timesIds());
             competicao.setTimes(times);
         }
 
-        if (competicaoCreate.getJogosIds() != null && !competicaoCreate.getJogosIds().isEmpty()){
-            List<Jogo> jogos = jogoRepository.findAllById(competicaoCreate.getJogosIds());
+        if (competicaoCreate.jogosIds() != null && !competicaoCreate.jogosIds().isEmpty()){
+            List<Jogo> jogos = jogoRepository.findAllById(competicaoCreate.jogosIds());
             competicao.setJogos(jogos);
         }
 
@@ -60,19 +60,19 @@ public class CompeticaoService {
         Competicao competicao = competicaoRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Competicao nao encontrada"));
 
-        if (competicaoCreate.getTimesIds() != null && !competicaoCreate.getTimesIds().isEmpty()){
-            List<Time> times = timeRepository.findAllById(competicaoCreate.getTimesIds());
+        if (competicaoCreate.timesIds() != null && !competicaoCreate.timesIds().isEmpty()){
+            List<Time> times = timeRepository.findAllById(competicaoCreate.timesIds());
             competicao.setTimes(times);
         }
 
-        if (competicaoCreate.getJogosIds() != null && !competicaoCreate.getJogosIds().isEmpty()){
-            List<Jogo> jogos = jogoRepository.findAllById(competicaoCreate.getJogosIds());
+        if (competicaoCreate.jogosIds() != null && !competicaoCreate.jogosIds().isEmpty()){
+            List<Jogo> jogos = jogoRepository.findAllById(competicaoCreate.jogosIds());
             competicao.setJogos(jogos);
         }
 
-        competicao.setNome(competicaoCreate.getNome());
-        competicao.setDataInicio(competicaoCreate.getDataInicio());
-        competicao.setDataFim(competicaoCreate.getDataFim());
+        competicao.setNome(competicaoCreate.nome());
+        competicao.setDataInicio(competicaoCreate.dataInicio());
+        competicao.setDataFim(competicaoCreate.dataFim());
 
         return competicaoRepository.save(competicao);
     }

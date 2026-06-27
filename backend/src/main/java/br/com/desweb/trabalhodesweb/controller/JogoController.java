@@ -1,9 +1,13 @@
 package br.com.desweb.trabalhodesweb.controller;
 
+import br.com.desweb.trabalhodesweb.dto.EventoCreate;
+import br.com.desweb.trabalhodesweb.dto.EventoDTO;
 import br.com.desweb.trabalhodesweb.dto.JogoCreate;
-import br.com.desweb.trabalhodesweb.model.Jogo;
+import br.com.desweb.trabalhodesweb.dto.JogoDTO;
 import br.com.desweb.trabalhodesweb.service.JogoService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,30 +21,50 @@ public class JogoController {
     private JogoService jogoService;
 
     @GetMapping
-    public List<Jogo> listarJogos() {
-        return jogoService.listarJogos();
+    public ResponseEntity<List<JogoDTO>> listarJogos() {
+        return ResponseEntity.ok(jogoService.listarJogos());
     }
 
-    // acho que nem é necessário
     @GetMapping("{id}")
-    public Jogo buscarJogoPorId(@PathVariable Long id) {
-        return jogoService.buscarJogoPorId(id);
+    public ResponseEntity<JogoDTO> buscarJogoPorId(@PathVariable Long id) {
+        return ResponseEntity.ok(jogoService.buscarJogoPorId(id));
     }
 
     @PostMapping
-    public Jogo criarJogo(@RequestBody JogoCreate jogoCreate) {
-        return jogoService.criarJogo(jogoCreate);
+    public ResponseEntity<JogoDTO> criarJogo(@RequestBody JogoCreate jogoCreate) {
+        return new ResponseEntity<>(jogoService.criarJogo(jogoCreate), HttpStatus.CREATED);
     }
 
-    // não sei como vai funcionar isso com os eventos
     @PutMapping("{id}")
-    public Jogo atualizarJogo(@PathVariable Long id, @RequestBody JogoCreate jogoCreate) {
-        return jogoService.atualizarJogo(id, jogoCreate);
+    public ResponseEntity<JogoDTO> atualizarJogo(@PathVariable Long id, @RequestBody JogoCreate jogoCreate) {
+        return ResponseEntity.ok(jogoService.atualizarJogo(id, jogoCreate));
     }
 
-    // também não sei se é necessário
     @DeleteMapping("{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deletarJogo(@PathVariable Long id) {
         jogoService.deletarJogo(id);
+    }
+
+    @PostMapping("{id}/iniciar")
+    public ResponseEntity<JogoDTO> iniciarJogo(@PathVariable Long id) {
+        return ResponseEntity.ok(jogoService.iniciarJogo(id));
+    }
+
+    @PostMapping("{id}/intervalo")
+    public ResponseEntity<JogoDTO> iniciarIntervalo(@PathVariable Long id) {
+        return ResponseEntity.ok(jogoService.iniciarIntervalo(id));
+    }
+
+    @PostMapping("{id}/encerrar")
+    public ResponseEntity<JogoDTO> encerrarJogo(@PathVariable Long id) {
+        return ResponseEntity.ok(jogoService.encerrarJogo(id));
+    }
+
+    @PostMapping("{id}/eventos")
+    public ResponseEntity<EventoDTO> adicionarEvento(
+            @PathVariable Long id,
+            @RequestBody EventoCreate eventoCreate) {
+        return new ResponseEntity<>(jogoService.adicionarEvento(id, eventoCreate), HttpStatus.CREATED);
     }
 }

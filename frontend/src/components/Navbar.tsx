@@ -29,6 +29,15 @@ export const Navbar = () => {
               Home
             </NavLink>
 
+            <NavLink
+              className="hidden text-branco-texto hover:text-verde-texto md:block"
+              aria-current="page"
+              to="/eventos"
+            >
+              <i className="bi bi-calendar-event me-1"></i>
+              Eventos
+            </NavLink>
+
             {/* ELEMTENTOS DA NAVBAR QUE VARIAM DEPENDENDO DO TIPO DO USUÁRIO O PADRÃO É A DO USER PADRÃO (else) */}
             {tokenResponse.role == "ADMIN" ? (
               <>
@@ -56,6 +65,16 @@ export const Navbar = () => {
                   <i className="bi bi-trophy  me-1"></i>
                   Criar Competição
                 </NavLink>
+
+                <NavLink
+                  className="hidden text-branco-texto hover:text-verde-texto md:block"
+                  aria-current="page"
+                  to="/criar-time"
+                >
+                  <i className="bi bi-shield-plus me-1"></i>
+                  Criar Times
+                </NavLink>
+
               </>
             ) : (
               <>
@@ -141,6 +160,16 @@ export const Navbar = () => {
               <i className="bi bi-house me-1"></i>
               Home
             </NavLink>
+
+            <NavLink
+              className="text-branco-texto hover:text-verde-texto"
+              aria-current="page"
+              to="/eventos"
+              onClick={() => setIsOpen(false)}
+            >
+              <i className="bi bi-calendar-event me-1"></i>
+              Eventos
+            </NavLink>
             {tokenResponse.role == "ADMIN" ? (
               <>
                 <NavLink
@@ -170,6 +199,17 @@ export const Navbar = () => {
                   <i className="bi bi-trophy  me-1"></i>
                   Criar Competição
                 </NavLink>
+
+                <NavLink
+                  className=" text-branco-texto hover:text-verde-texto md:block"
+                  aria-current="page"
+                  to="/cadastrar-times"
+                  onClick={() => setIsOpen(false)}
+                >
+                  <i className="bi bi-shield-plus  me-1"></i>
+                  Cad. Times
+                </NavLink>
+
               </>
             ) : (
               <>

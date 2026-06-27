@@ -1,13 +1,16 @@
-import type { Competicao } from "./Competicao";
-import type { Time } from "./Time";
-
 export interface Jogo {
   id: number;
-  timeA: Time;
-  timeB: Time;
-  competicao: Competicao;
-  placarA: number;
-  placarB: number;
   descricao: string;
   local: string;
+  placarA: number;
+  placarB: number;
+  timeAId: number;
+  timeANome: string;
+  timeAImagem: string;
+  timeBId: number;
+  timeBNome: string;
+  timeBImagem: string;
+  competicaoId: number;
+  status: "AGUARDANDO" | "EM_ANDAMENTO" | "INTERVALO" | "ENCERRADO";
+  iniciadoEm: string | null;
 }
