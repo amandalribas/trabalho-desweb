@@ -1,5 +1,6 @@
 package br.com.desweb.trabalhodesweb.service;
 
+import br.com.desweb.trabalhodesweb.config.RabbitMQConfig;
 import br.com.desweb.trabalhodesweb.dto.EventoDTO;
 import br.com.desweb.trabalhodesweb.dto.EventoCreate;
 import br.com.desweb.trabalhodesweb.mapper.EventoMapper;
@@ -9,6 +10,7 @@ import br.com.desweb.trabalhodesweb.model.Time;
 import br.com.desweb.trabalhodesweb.repository.EventoRepository;
 import br.com.desweb.trabalhodesweb.repository.JogoRepository;
 import br.com.desweb.trabalhodesweb.repository.TimeRepository;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -30,6 +32,9 @@ public class EventoService {
 
     @Autowired
     private EventoMapper eventoMapper;
+
+    @Autowired
+    private RabbitTemplate rabbitTemplate;
 
     public List<EventoDTO> listarEventos() {
         return eventoMapper.toEventosDTO(eventoRepository.findAll());
@@ -58,7 +63,16 @@ public class EventoService {
         evento.setJogo(jogo);
         evento.setTime(time);
 
-        return eventoMapper.toEventoDTO(eventoRepository.save(evento));
+        EventoDTO eventoDTO = eventoMapper.toEventoDTO(eventoRepository.save(evento));
+
+        //Dispara para o RABBITMQ passando o nome da EXCHANGE, chave de roteament (ignora pq é do tipo FanOut, e o objeto que queremos enviar)
+        //Se a gente for controlar a distribuição da fila pelo backEnd precisamos nos preocupar com a chave de roteamento aqui
+        rabbitTemplate.convertAndSend(
+                RabbitMQConfig.EXCHANGE_EVENTOS,
+                "eventos",
+                eventoDTO);
+
+        return eventoDTO;
     }
 
     public EventoDTO atualizarEvento(Long id, EventoCreate eventoCreate) {
