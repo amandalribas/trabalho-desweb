@@ -1,5 +1,7 @@
+import useTokenStore from "../store/TokenStore";
 import useListarEventos from "../hooks/evento/useListarEventos";
 import useListarJogos from "../hooks/jogo/useListarJogos";
+import useListarTimesUser from "../hooks/user/useListarTimesUser";
 
 const LABEL_EVENTO: Record<string, string> = {
   GOL: "⚽ Gol",
@@ -16,16 +18,41 @@ const LABEL_EVENTO: Record<string, string> = {
 };
 
 const EventosPage = () => {
+  const tokenResponse = useTokenStore((s) => s.tokenResponse);
   const { data: eventos, isLoading, isError } = useListarEventos();
   const { data: jogos } = useListarJogos();
+  const { data: meusTimes, isLoading: isTimesLoading } = useListarTimesUser();
 
-  if (isLoading) return <p className="text-gray-500">Carregando eventos...</p>;
+  if (isLoading || isTimesLoading)
+    return <p className="text-gray-500">Carregando eventos...</p>;
 
   if (isError)
     return <p className="text-red-600">Não foi possível carregar os eventos.</p>;
 
+  if (tokenResponse.idUsuario <= 0) {
+    return (
+      <div className="mx-auto max-w-6xl px-4 py-6">
+        <h1 className="mb-1 text-2xl font-semibold text-gray-800">Eventos</h1>
+        <p className="text-gray-500">
+          Faça login para ver eventos dos times que você acompanha.
+        </p>
+      </div>
+    );
+  }
+
+  const subscribedTimeIds = new Set(meusTimes?.map((time) => time.id) ?? []);
+
   const eventosOrdenados = eventos
-    ? [...eventos].sort((a, b) => b.id - a.id)
+    ? [...eventos]
+        .filter((evento) => {
+          const jogoDoEvento = jogos?.find((j) => j.id === evento.jogoId);
+          return (
+            jogoDoEvento &&
+            (subscribedTimeIds.has(jogoDoEvento.timeAId) ||
+              subscribedTimeIds.has(jogoDoEvento.timeBId))
+          );
+        })
+        .sort((a, b) => b.id - a.id)
     : [];
 
   return (

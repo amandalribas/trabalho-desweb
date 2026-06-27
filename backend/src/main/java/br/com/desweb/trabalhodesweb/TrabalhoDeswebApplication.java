@@ -53,12 +53,13 @@ public class TrabalhoDeswebApplication implements CommandLineRunner {
         timeRepository.save(time);
     }
 
-    private Evento criarEvento(TipoEvento tipo, String jogador, Time time, Jogo jogo) {
+    private Evento criarEvento(TipoEvento tipo, String jogador, Time time, Jogo jogo, Integer minuto) {
         Evento evento = new Evento();
         evento.setTipoEvento(tipo);
         evento.setJogador(jogador);
         evento.setTime(time);
         evento.setJogo(jogo);
+        evento.setMinuto(minuto);
         return eventoRepository.save(evento);
     }
 
@@ -109,7 +110,7 @@ public class TrabalhoDeswebApplication implements CommandLineRunner {
         criarTime("ESPANHA", "ESP", "/times/espanha.png");
 
 
-        //=======================CRIANDO JOGOS E EVENTOS======================
+//=======================CRIANDO JOGOS E EVENTOS======================
         if (jogoRepository.count() == 0) {
             Competicao copa = competicaoRepository.findAll().get(0);
 
@@ -117,47 +118,89 @@ public class TrabalhoDeswebApplication implements CommandLineRunner {
             Time argentina = timeRepository.findBySigla("ARG").get();
             Time franca    = timeRepository.findBySigla("FRA").get();
             Time portugal  = timeRepository.findBySigla("POR").get();
+            Time alemanha  = timeRepository.findBySigla("GER").get();
+            Time espanha   = timeRepository.findBySigla("ESP").get();
+            Time uruguai   = timeRepository.findBySigla("URU").get();
+            Time marrocos  = timeRepository.findBySigla("MAR").get();
 
-            // Jogo 1: Brasil x Argentina
+            // --- JOGO 1: ENCERRADO (Semifinal) ---
             Jogo jogo1 = new Jogo();
             jogo1.setCompeticao(copa);
             jogo1.setTimeA(brasil);
             jogo1.setTimeB(argentina);
-            jogo1.setPlacarA(2);
+            jogo1.setPlacarA(10);
             jogo1.setPlacarB(1);
-            jogo1.setDescricao("Semifinal da copa 2026");
-            jogo1.setLocal("Maracanã, Rio de Janeiro");
+            jogo1.setStatus(StatusJogo.ENCERRADO);
+            jogo1.setIniciadoEm(java.time.Instant.now().minus(java.time.Duration.ofDays(2)));
+            jogo1.setDescricao("Semifinal - Copa 2026");
+            jogo1.setLocal("MetLife Stadium, Nova York");
             jogoRepository.save(jogo1);
 
-            criarEvento(TipoEvento.INICIO,          null,          brasil,    jogo1);
-            criarEvento(TipoEvento.GOL,             "Vinicius Jr", brasil,    jogo1);
-            criarEvento(TipoEvento.CARTAO_AMARELO,  "De Paul",     argentina, jogo1);
-            criarEvento(TipoEvento.INTERVALO,       null,          brasil,    jogo1);
-            criarEvento(TipoEvento.GOL,             "Messi",       argentina, jogo1);
-            criarEvento(TipoEvento.GOL,             "Rodrygo",     brasil,    jogo1);
-            criarEvento(TipoEvento.CARTAO_VERMELHO, "Otamendi",    argentina, jogo1);
-            criarEvento(TipoEvento.FIM,             null,          brasil,    jogo1);
+            criarEvento(TipoEvento.INICIO,          null,          brasil,    jogo1, 0);
+            criarEvento(TipoEvento.GOL,             "Vinicius Jr", brasil,    jogo1, 15);
+            criarEvento(TipoEvento.GOL,             "Vinicius Jr", brasil,    jogo1, 16);
+            criarEvento(TipoEvento.GOL,             "Vinicius Jr", brasil,    jogo1, 17);
+            criarEvento(TipoEvento.GOL,             "Vinicius Jr", brasil,    jogo1, 18);
+            criarEvento(TipoEvento.GOL,             "Vinicius Jr", brasil,    jogo1, 19);
+            criarEvento(TipoEvento.INTERVALO,       null,          brasil,    jogo1, 45);
+            criarEvento(TipoEvento.GOL,             "Messi",       argentina, jogo1, 55);
+            criarEvento(TipoEvento.GOL,             "Vinicius Jr", brasil,    jogo1, 67);
+            criarEvento(TipoEvento.GOL,             "Vinicius Jr", brasil,    jogo1, 69);
+            criarEvento(TipoEvento.GOL,             "Endrick",     brasil,    jogo1, 78);
+            criarEvento(TipoEvento.CARTAO_VERMELHO, "Messi",    argentina, jogo1, 85);
+            criarEvento(TipoEvento.GOL,             "Vinicius Jr", brasil,    jogo1, 84);
+            criarEvento(TipoEvento.GOL,             "Vinicius Jr", brasil,    jogo1, 89);
+            criarEvento(TipoEvento.FIM,             null,          brasil,    jogo1, 90);
 
-            // Jogo 2: França x Portugal
+            // --- JOGO 2: ENCERRADO (Quartas de Final) ---
             Jogo jogo2 = new Jogo();
             jogo2.setCompeticao(copa);
             jogo2.setTimeA(franca);
-            jogo2.setTimeB(portugal);
-            jogo2.setPlacarA(1);
+            jogo2.setTimeB(alemanha);
+            jogo2.setPlacarA(3);
             jogo2.setPlacarB(1);
-            jogo2.setDescricao("Jogo");
-            jogo2.setLocal("Stade de France, Paris");
+            jogo2.setStatus(StatusJogo.ENCERRADO);
+            jogo2.setIniciadoEm(java.time.Instant.now().minus(java.time.Duration.ofDays(4)));
+            jogo2.setDescricao("Oitavas de Final - Copa 2026");
+            jogo2.setLocal("Gillette Stadium, Boston");
             jogoRepository.save(jogo2);
 
-            criarEvento(TipoEvento.INICIO,         null,       franca,   jogo2);
-            criarEvento(TipoEvento.GOL,            "Kylian Dictador",   franca,   jogo2);
-            criarEvento(TipoEvento.CARTAO_AMARELO, "Bruno Fernandes",  portugal, jogo2);
-            criarEvento(TipoEvento.INTERVALO,      null,       franca,   jogo2);
-            criarEvento(TipoEvento.PENALTI,        "Ronaldo",  portugal, jogo2);
-            criarEvento(TipoEvento.GOL,            "Ronaldo",  portugal, jogo2);
-            criarEvento(TipoEvento.ACRESCIMO,      null,       franca,   jogo2);
-            criarEvento(TipoEvento.FIM,            null,       franca,   jogo2);
+            criarEvento(TipoEvento.INICIO,         null,              franca,   jogo2, 0);
+            criarEvento(TipoEvento.GOL,            "Kylian Mbappé",   franca,   jogo2, 22);
+            criarEvento(TipoEvento.CARTAO_AMARELO, "Bruno Fernandes", alemanha, jogo2, 41);
+            criarEvento(TipoEvento.INTERVALO,      null,              franca,   jogo2, 45);
+            criarEvento(TipoEvento.GOL,            "Kylian Mbappé",   franca,   jogo2, 50);
+            criarEvento(TipoEvento.GOL,            "Kylian Mbappé",   franca,   jogo2, 67);
+            criarEvento(TipoEvento.PENALTI,        "Musiala",         alemanha, jogo2, 88);
+            criarEvento(TipoEvento.GOL,            "Musiala",         alemanha, jogo2, 89);
+            criarEvento(TipoEvento.FIM,            null,              franca,   jogo2, 90);
 
+            // --- JOGO 4: AGUARDANDO (Oitavas de Final) ---
+            Jogo jogo4 = new Jogo();
+            jogo4.setCompeticao(copa);
+            jogo4.setTimeA(uruguai);
+            jogo4.setTimeB(marrocos);
+            jogo4.setPlacarA(0); // Placar inicial
+            jogo4.setPlacarB(0);
+            jogo4.setStatus(StatusJogo.AGUARDANDO);
+            jogo4.setIniciadoEm(null); // Jogo ainda não começou
+            jogo4.setDescricao("Oitavas de Final - Copa 2026");
+            jogo4.setLocal("AT&T Stadium, Dallas");
+            jogoRepository.save(jogo4);
+            // Jogos aguardando não possuem eventos registrados ainda.
+
+            // --- JOGO 5: AGUARDANDO (A Grande Final) ---
+            Jogo jogo5 = new Jogo();
+            jogo5.setCompeticao(copa);
+            jogo5.setTimeA(brasil);
+            jogo5.setTimeB(franca);
+            jogo5.setPlacarA(0);
+            jogo5.setPlacarB(0);
+            jogo5.setStatus(StatusJogo.AGUARDANDO);
+            jogo5.setIniciadoEm(null);
+            jogo5.setDescricao("FINAL - Copa 2026");
+            jogo5.setLocal("Azteca, Cidade do México");
+            jogoRepository.save(jogo5);
 
         }
     }
