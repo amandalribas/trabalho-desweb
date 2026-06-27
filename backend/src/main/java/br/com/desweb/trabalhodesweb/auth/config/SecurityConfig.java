@@ -68,26 +68,30 @@ public class SecurityConfig {
 
                 .authorizeHttpRequests(authorize -> authorize
 
-                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                                .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
 
-                        // Libera login
-                        .requestMatchers(HttpMethod.POST, "/autenticacao/login").permitAll()
-                        .requestMatchers("/autenticacao/**").permitAll()
+                                // Libera login
+                                .requestMatchers(HttpMethod.POST, "/autenticacao/login").permitAll()
+                                .requestMatchers("/autenticacao/**").permitAll()
 
-                        // Libera cadastro e listagem de usuários por enquanto
-                        .requestMatchers(HttpMethod.POST, "/usuarios").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/usuarios").permitAll()
+                                // Libera cadastro e listagem de usuários por enquanto
+                                .requestMatchers(HttpMethod.POST, "/usuarios").permitAll()
+                                .requestMatchers(HttpMethod.GET, "/usuarios").permitAll()
 
-                        // Rotas públicas do sistema
-                        .requestMatchers(HttpMethod.GET, "/jogos/**").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/times/**").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/competicoes/**").permitAll()
+                                // Rotas públicas do sistema
+                                .requestMatchers(HttpMethod.GET, "/jogos/**").permitAll()
+                                .requestMatchers(HttpMethod.GET, "/times/**").permitAll()
+                                .requestMatchers(HttpMethod.GET, "/competicoes/**").permitAll()
 
-                        // Única parte privada por enquanto
-                        .requestMatchers("/admin/**").hasRole(Role.ADMIN.name())
+                                // Rotas do usuário logado
+                                .requestMatchers(HttpMethod.GET, "/usuarios/me/times").hasAnyRole(Role.USER.name(), Role.ADMIN.name())
+                                .requestMatchers(HttpMethod.POST, "/usuarios/me/times/**").hasRole(Role.USER.name())
+                                .requestMatchers(HttpMethod.DELETE, "/usuarios/me/times/**").hasRole(Role.USER.name())
 
-                        // Todo o resto liberado durante os testes
-                        .anyRequest().permitAll()
+
+                                .requestMatchers("/admin/**").hasRole(Role.ADMIN.name()) //parte privada do admin
+
+                                .anyRequest().permitAll()
                 )
 
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
@@ -97,22 +101,22 @@ public class SecurityConfig {
                         response.setStatus(HttpStatus.UNAUTHORIZED.value());
                         response.setContentType("application/json");
                         response.getWriter().write("""
-                    {
-                        "status": 401,
-                        "message": "Necessario estar autenticado para acessar este recurso."
-                    }
-                    """);
+                                {
+                                    "status": 401,
+                                    "message": "Necessario estar autenticado para acessar este recurso."
+                                }
+                                """);
                     });
 
                     ex.accessDeniedHandler((request, response, accessDeniedException) -> {
                         response.setStatus(HttpStatus.FORBIDDEN.value());
                         response.setContentType("application/json");
                         response.getWriter().write("""
-                    {
-                        "status": 403,
-                        "message": "Voce nao tem permissao para acessar este recurso."
-                    }
-                    """);
+                                {
+                                    "status": 403,
+                                    "message": "Voce nao tem permissao para acessar este recurso."
+                                }
+                                """);
                     });
                 });
 

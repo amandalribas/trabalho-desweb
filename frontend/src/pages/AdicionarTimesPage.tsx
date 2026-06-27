@@ -1,29 +1,22 @@
-import { NavLink } from "react-router-dom";
-import useRemoverTimeUser from "../hooks/user/useRemoverTimeUser";
+import useListarTimes from "../hooks/time/useListarTimes";
+import useAdicionarTimeUser from "../hooks/user/useAdicionarTimeUser";
 import useListarTimesUser from "../hooks/user/useListarTimesUser";
 
-
-const MeusTimesPage = () => {
+const AdicionarTimesPage = () => {
+  const { data: times } = useListarTimes();
   const { data: meusTimes } = useListarTimesUser();
-  const { mutate: removerTime } = useRemoverTimeUser();
+  const { mutate: adicionarTime } = useAdicionarTimeUser();
+
+  const timesDisponiveis = times?.filter(
+    (time) => !meusTimes?.some((meuTime) => meuTime.id === time.id),
+  );
 
   return (
-    <div className="mx-auto max-w-4xl">
-      <div className="mb-6 flex items-center justify-between">
-        <h1 className="text-3xl font-bold text-verde-texto">
-          Meus Times
-        </h1>
-
-        <NavLink
-          to="/adicionar-times"
-          className="rounded-md bg-green-600 px-5 py-2 font-semibold text-white hover:bg-green-700"
-        >
-          Adicionar Times
-        </NavLink>
-      </div>
-
+    <div>
+      <h1 className="text-3xl font-bold text-verde-texto">Adicionar times</h1>
+      <br/>
       <div className="overflow-hidden rounded-md border border-gray-300 bg-white">
-        {meusTimes?.map((time) => (
+        {timesDisponiveis?.map((time) => (
           <div
             key={time.id}
             className="flex items-center justify-between border-b border-gray-200 px-4 py-3 last:border-b-0"
@@ -43,17 +36,17 @@ const MeusTimesPage = () => {
 
             <button
               type="button"
-              onClick={() => removerTime(time.id)}
-              className="rounded-md bg-red-600 px-4 py-2 text-sm font-semibold text-white hover:bg-red-700"
+              onClick={() => adicionarTime(time.id)}
+              className="rounded-md bg-green-600 px-4 py-2 text-sm font-semibold text-white hover:bg-green-700"
             >
-              Remover
+              Adicionar
             </button>
           </div>
         ))}
 
-        {meusTimes?.length === 0 && (
+        {timesDisponiveis?.length === 0 && (
           <p className="px-4 py-6 text-center text-gray-600">
-            Você ainda não adicionou nenhum time.
+            Todos os times já foram adicionados à sua lista.
           </p>
         )}
       </div>
@@ -61,4 +54,4 @@ const MeusTimesPage = () => {
   );
 };
 
-export default MeusTimesPage;
+export default AdicionarTimesPage;

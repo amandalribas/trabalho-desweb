@@ -1,5 +1,6 @@
 package br.com.desweb.trabalhodesweb.auth.model;
 
+import br.com.desweb.trabalhodesweb.model.Time;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
@@ -10,6 +11,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 import java.util.ArrayList;
+import java.util.List;
 
 @ToString
 @Getter
@@ -35,20 +37,22 @@ public class Usuario {
 
     @Enumerated(EnumType.STRING)
     private Role role = Role.USER;
-
+    /*
     @ElementCollection(fetch = FetchType.LAZY)
     @CollectionTable(
             name = "usuario_times",
             joinColumns = @JoinColumn(name = "usuario_id")
     )
     @Column(name = "time_id") //
-    private java.util.List<Long> timesIds = new java.util.ArrayList<>();
+    private java.util.List<Long> timesIds = new java.util.ArrayList<>();*/
+    @ManyToMany
+    private List<Time> timesFavoritos = new ArrayList<>();
 
     public Usuario(String nome, String email, String senha, Role role, ArrayList<Long> timesIds) {
         this.nome = nome;
         this.email = email;
         this.senha = senha;
         this.role = role;
-        this.timesIds = new java.util.ArrayList<>(timesIds);;
+        this.timesFavoritos = new java.util.ArrayList<>();;
     }
 }

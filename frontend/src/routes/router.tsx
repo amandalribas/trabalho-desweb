@@ -13,6 +13,7 @@ import AtualizarJogoPage from "../pages/AtualizarJogoPage";
 import CriarCompeticaoPage from "../pages/CriarCompeticaoPage";
 import CriarTimePage from "../pages/CriarTimePage";
 import EventosPage from "../pages/EventosPage";
+import AdicionarTimesPage from "../pages/AdicionarTimesPage";
 
 const router = createBrowserRouter([
   {
@@ -24,8 +25,7 @@ const router = createBrowserRouter([
       { index: true, element: <Navigate to="/home" replace /> },
       { path: "home", element: <HomePage /> },
       { path: "em-andamento", element: <EmAndamentoPage /> },
-      { path: "meus-times", element: <MeusTimesPage /> },
-      { path: "notificacoes", element: <NotificacoesPage /> },
+      
       { path: "eventos", element: <EventosPage /> },
       { path: "login", element: <LoginPage /> },
     ],
@@ -41,6 +41,10 @@ const router = createBrowserRouter([
       { path: "atualizar-jogo", element: <AtualizarJogoPage /> },
       { path: "criar-competicao", element: <CriarCompeticaoPage /> },
       { path: "criar-time", element: <CriarTimePage /> },
+      //rotas do user comum: 
+      { path: "meus-times", element: <MeusTimesPage /> },
+      { path: "adicionar-times", element: <AdicionarTimesPage />},
+      { path: "notificacoes", element: <NotificacoesPage /> },
     ],
   },
 ]);
