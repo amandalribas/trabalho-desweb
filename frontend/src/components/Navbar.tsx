@@ -1,12 +1,52 @@
 import "bootstrap-icons/font/bootstrap-icons.min.css";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
 import useTokenStore from "../store/TokenStore";
 import logo from "../assets/logo-fut.png";
+import { Client } from "@stomp/stompjs";
+
+
+const SockJS = require("sockjs-client/dist/sockjs.js");
+
 
 export const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const tokenResponse = useTokenStore((s) => s.tokenResponse);
+  const [naoLidas, setNaoLidas] = useState(0);
+
+
+  //ESCUTAR RABBITMQ VIA WEBSOCKET EM SEGUNDO PLANO
+  useEffect(() => {
+    const socket = new SockJS("http://localhost:8080/ws-server"); 
+    
+    const stompClient = new Client({
+      webSocketFactory: () => socket,
+      reconnectDelay: 5000,
+      onConnect: () => {
+        console.log("Conectou ao webSocket pelo react");
+
+        // Se inscreve na fila
+        stompClient.subscribe("/canalBack/eventos", (message) => {
+          if (message.body) {
+            
+            setNaoLidas((prev) => prev + 1);
+
+            const evento = JSON.parse(message.body);
+            alert(`Lance importante no jogo: ${evento.descricao || evento}`);
+          }
+        });
+      },
+      onStompError: (frame) => {
+        console.error("Erro STOMP:", frame.headers["message"]);
+      }
+    });
+
+    stompClient.activate();
+
+    return () => {
+      if (stompClient) stompClient.deactivate();
+    };
+  }, []);
 
   return (
     <nav className="bg-amarelo-background mb-6 py-4">
@@ -94,14 +134,21 @@ export const Navbar = () => {
                   <i className="bi bi-people  me-1"></i>
                   Meus Times
                 </NavLink>
-                <NavLink
-                  className="hidden text-branco-texto hover:text-verde-texto md:block"
-                  aria-current="page"
-                  to="/notificacoes"
-                >
-                  <i className="bi bi-bell  me-1"></i>
-                  Notificações
-                </NavLink>
+                <NavLink 
+                    className="hidden text-branco-texto hover:text-verde-texto md:flex items-center relative" 
+                    to="/notificacoes"
+                    onClick={() => setNaoLidas(0)} 
+                  >
+                    <i className="bi bi-bell me-1"></i>
+                    Notificações
+
+                    
+                    {naoLidas > 0 && (
+                      <span className="absolute -top-1 -right-3 bg-red-600 text-white rounded-full text-[10px] font-bold px-1.5 py-0.5 animate-pulse">
+                        {naoLidas}
+                      </span>
+                    )}
+                  </NavLink>
               </>
             )}
 
@@ -132,7 +179,7 @@ export const Navbar = () => {
                 : "border border-verde-texto")
             }
           >
-            {/* Use um ícone de hambúrguer aqui */}
+            
             <svg
               className="h-6 w-6"
               fill="none"
@@ -231,15 +278,20 @@ export const Navbar = () => {
                   <i className="bi bi-people me-1"></i>
                   Meus Times
                 </NavLink>
-                <NavLink
-                  className="text-branco-texto hover:text-verde-texto"
-                  aria-current="page"
+                <NavLink 
+                  className="hidden text-branco-texto hover:text-verde-texto md:flex items-center relative" 
                   to="/notificacoes"
-                  onClick={() => setIsOpen(false)}
+                  onClick={() => setNaoLidas(0)} 
                 >
                   <i className="bi bi-bell me-1"></i>
                   Notificações
-                </NavLink>
+
+                  {naoLidas > 0 && (
+                    <span className="absolute -top-1 -right-3 bg-red-600 text-white rounded-full text-[10px] font-bold px-1.5 py-0.5 animate-pulse">
+                      {naoLidas}
+                    </span>
+  )}
+</NavLink>
               </>
             )}
 
