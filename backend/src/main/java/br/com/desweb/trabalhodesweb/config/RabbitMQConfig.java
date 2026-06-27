@@ -23,7 +23,7 @@ public class RabbitMQConfig {
     //uma única fila, logo o exchange vai jogar tudo nessa fila no back
     //A filtragem vai ser pelo front (ao invés de ter uma fila para cada time no back)
     public Queue eventos(){
-        return new Queue(FILA_EVENTOS, true);
+        return new Queue(FILA_EVENTOS, true, false, false);
     }
 
     //Exchange do tipo Fanout (ela envia cópias para todas as filas ligadas nela)
