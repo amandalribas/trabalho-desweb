@@ -23,7 +23,7 @@ public class Competicao {
     private String nome;
 
     // Mexi e comentei pq não preciso no momento para poder testar a criação do jogo
-    @OneToMany(mappedBy = "competicao")
+    @OneToMany(mappedBy = "competicao", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
     private List<Jogo> jogos;
 

@@ -41,7 +41,7 @@ const CriarCompeticaoForm = () => {
         };
 
         criarCompeticao(payload, {
-            onSuccess: () => navigate("/atualizar-competicao"),
+            onSuccess: () => navigate("/gerenciar-competicoes"),
         });
     };
 

@@ -41,7 +41,7 @@ const router = createBrowserRouter([
       { path: "atualizar-jogo", element: <AtualizarJogoPage /> },
       { path: "criar-competicao", element: <CriarCompeticaoPage /> },
       { path: "criar-time", element: <CriarTimePage /> },
-      { path: "atualizar-competicao", element: <AtualizarCompeticaoPage />},
+      { path: "gerenciar-competicoes", element: <AtualizarCompeticaoPage />},
       //rotas do user comum: 
       { path: "meus-times", element: <MeusTimesPage /> },
       { path: "eventos", element: <EventosPage /> },
