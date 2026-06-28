@@ -2,10 +2,13 @@ package br.com.desweb.trabalhodesweb.controller;
 
 import br.com.desweb.trabalhodesweb.dto.CompeticaoCreate;
 import br.com.desweb.trabalhodesweb.dto.CompeticaoDTO;
+import br.com.desweb.trabalhodesweb.model.Competicao;
+import br.com.desweb.trabalhodesweb.repository.CompeticaoRepository;
 import br.com.desweb.trabalhodesweb.service.CompeticaoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -16,6 +19,8 @@ public class CompeticaoController {
 
     @Autowired
     private CompeticaoService competicaoService;
+    @Autowired
+    private CompeticaoRepository competicaoRepository;
 
     @GetMapping
     public List<CompeticaoDTO> listarCompeticoes() {
@@ -40,7 +45,5 @@ public class CompeticaoController {
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deletarCompeticao(@PathVariable Long id) {
-        competicaoService.deletarCompeticao(id);
-    }
+    public void deletarCompeticao(@PathVariable Long id) { competicaoService.deletarCompeticao(id); }
 }

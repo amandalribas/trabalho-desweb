@@ -10,6 +10,7 @@ const useDeletarCompeticao = () => {
   return useMutation({
     mutationFn: (id: number) => removerPorId(id),
     onSuccess: () => {
+      queryClient.removeQueries({ queryKey: ["competicoes"] });
       queryClient.invalidateQueries({ queryKey: ["competicoes"] });
     },
   });

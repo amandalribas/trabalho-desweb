@@ -61,10 +61,10 @@ export const Navbar = () => {
                 <NavLink
                   className="hidden text-branco-texto hover:text-verde-texto md:block"
                   aria-current="page"
-                  to="/atualizar-competicao"
+                  to="/gerenciar-competicoes"
                 >
                   <i className="bi bi-pencil-square me-1"></i>
-                  Atualizar Competicao
+                  Gerenciar Competicoes
                 </NavLink>
                 <NavLink
                   className="hidden text-branco-texto hover:text-verde-texto md:block"

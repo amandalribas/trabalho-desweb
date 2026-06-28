@@ -66,6 +66,15 @@ public class CompeticaoService {
 
     @Transactional
     public void deletarCompeticao(Long id){
-        competicaoRepository.deleteById(id);
+        Competicao competicao = competicaoRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Competicao nao encontrada"));
+        if (competicao.getTimes() != null) {
+            competicao.getTimes().clear();
+        }
+        if (competicao.getJogos() != null) {
+            competicao.getJogos().clear();
+        }
+
+        competicaoRepository.delete(competicao);
     }
 }

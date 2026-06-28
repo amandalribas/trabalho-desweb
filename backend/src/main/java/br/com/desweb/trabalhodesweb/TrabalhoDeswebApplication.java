@@ -8,6 +8,7 @@ import br.com.desweb.trabalhodesweb.repository.CompeticaoRepository;
 import br.com.desweb.trabalhodesweb.repository.EventoRepository;
 import br.com.desweb.trabalhodesweb.repository.JogoRepository;
 import br.com.desweb.trabalhodesweb.repository.TimeRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -70,6 +71,7 @@ public class TrabalhoDeswebApplication implements CommandLineRunner {
     }
 
     @Override
+    @Transactional
     public void run(String... args) throws Exception {
 
         //=======================CRIANDO USUÁRIOS======================
@@ -94,6 +96,7 @@ public class TrabalhoDeswebApplication implements CommandLineRunner {
         //=======================CRIANDO COMPETIÇÕES======================
         if (competicaoRepository.count() == 0) {
             Competicao copa = new Competicao();
+            copa.setNome("Copa do Mundo FIFA 2026");
             copa.setDataInicio(new Date());
             copa.setDataFim(new Date());
             competicaoRepository.save(copa);
@@ -110,6 +113,8 @@ public class TrabalhoDeswebApplication implements CommandLineRunner {
         criarTime("ESPANHA", "ESP", "/times/espanha.png");
 
 
+
+
 //=======================CRIANDO JOGOS E EVENTOS======================
         if (jogoRepository.count() == 0) {
             Competicao copa = competicaoRepository.findAll().get(0);
@@ -122,6 +127,15 @@ public class TrabalhoDeswebApplication implements CommandLineRunner {
             Time espanha   = timeRepository.findBySigla("ESP").get();
             Time uruguai   = timeRepository.findBySigla("URU").get();
             Time marrocos  = timeRepository.findBySigla("MAR").get();
+
+            //=======================ADICIONANDO TIMES A COPA=====================
+
+            if (copa.getTimes() == null){
+                copa.setTimes(new ArrayList<>());
+            }
+
+            copa.getTimes().addAll(List.of(brasil, argentina, franca, portugal, alemanha, espanha, uruguai, marrocos));
+            competicaoRepository.save(copa);
 
             // --- JOGO 1: ENCERRADO (Semifinal) ---
             Jogo jogo1 = new Jogo();
