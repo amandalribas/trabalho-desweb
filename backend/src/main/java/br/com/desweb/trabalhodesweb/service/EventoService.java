@@ -67,10 +67,17 @@ public class EventoService {
 
         //Dispara para o RABBITMQ passando o nome da EXCHANGE, chave de roteament (ignora pq é do tipo FanOut, e o objeto que queremos enviar)
         //Se a gente for controlar a distribuição da fila pelo backEnd precisamos nos preocupar com a chave de roteamento aqui
-        rabbitTemplate.convertAndSend(
-                RabbitMQConfig.EXCHANGE_EVENTOS,
-                "eventos",
-                eventoDTO);
+        try {
+            System.out.println("DEBUG: Tentando enviar evento para RabbitMQ: " + eventoDTO.tipoEvento());
+            rabbitTemplate.convertAndSend(
+                    RabbitMQConfig.EXCHANGE_EVENTOS,
+                    "eventos",
+                    eventoDTO);
+            System.out.println("DEBUG: Evento enviado com sucesso para RabbitMQ");
+        } catch (Exception e) {
+            System.err.println("DEBUG: Erro ao enviar para RabbitMQ: " + e.getMessage());
+            e.printStackTrace();
+        }
 
         return eventoDTO;
     }

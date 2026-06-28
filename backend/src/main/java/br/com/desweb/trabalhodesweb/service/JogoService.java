@@ -137,7 +137,7 @@ public class JogoService {
         evento.setTime(time);
         evento.setMinuto(calcularMinuto(jogo));
 
-        // Atualizar placar se for gol
+
         if (eventoCreate.tipoEvento() == TipoEvento.GOL) {
             if (time.getId().equals(jogo.getTimeA().getId())) {
                 jogo.setPlacarA(jogo.getPlacarA() + 1);
@@ -146,7 +146,7 @@ public class JogoService {
             }
             jogoRepository.save(jogo);
         } else if (eventoCreate.tipoEvento() == TipoEvento.GOL_CONTRA) {
-            // Gol contra: marca para o time adversário
+
             if (time.getId().equals(jogo.getTimeA().getId())) {
                 jogo.setPlacarB(jogo.getPlacarB() + 1);
             } else {
@@ -156,7 +156,16 @@ public class JogoService {
         }
 
         EventoDTO eventoDTO = eventoMapper.toEventoDTO(eventoRepository.save(evento));
-        rabbitTemplate.convertAndSend(RabbitMQConfig.EXCHANGE_EVENTOS, "eventos", eventoDTO);
+
+        // CONVERSÃO MANUAL PARA STRING JSON AQUI:
+        try {
+            com.fasterxml.jackson.databind.ObjectMapper mapper = new com.fasterxml.jackson.databind.ObjectMapper();
+            String jsonNotificacao = mapper.writeValueAsString(eventoDTO);
+            rabbitTemplate.convertAndSend(RabbitMQConfig.EXCHANGE_EVENTOS, "eventos", jsonNotificacao);
+        } catch (com.fasterxml.jackson.core.JsonProcessingException e) {
+            e.printStackTrace();
+        }
+
         return eventoDTO;
     }
 
@@ -171,7 +180,15 @@ public class JogoService {
         evento.setJogo(jogo);
         evento.setMinuto(calcularMinuto(jogo));
         EventoDTO eventoDTO = eventoMapper.toEventoDTO(eventoRepository.save(evento));
-        rabbitTemplate.convertAndSend(RabbitMQConfig.EXCHANGE_EVENTOS, "eventos", eventoDTO);
+
+
+        try {
+            com.fasterxml.jackson.databind.ObjectMapper mapper = new com.fasterxml.jackson.databind.ObjectMapper();
+            String jsonNotificacao = mapper.writeValueAsString(eventoDTO);
+            rabbitTemplate.convertAndSend(RabbitMQConfig.EXCHANGE_EVENTOS, "eventos", jsonNotificacao);
+        } catch (com.fasterxml.jackson.core.JsonProcessingException e) {
+            e.printStackTrace();
+        }
     }
 
     private int calcularMinuto(Jogo jogo) {

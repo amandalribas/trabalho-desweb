@@ -14,14 +14,23 @@ public class NotificacaoService {
     @Autowired
     private SimpMessagingTemplate messagingTemplate;
 
-    // A anotação abaixo avisa para monitorar a fila
-    @RabbitListener(queues = RabbitMQConfig.FILA_EVENTOS)
-    public void notificarEvento(EventoDTO eventoDto) {
 
-        System.out.println("Atualização no jogo: " + eventoDto.tipoEvento());
+    @org.springframework.amqp.rabbit.annotation.RabbitListener(queues = "fila.eventos")
+    public void notificarEvento(String mensagemJson) {
+        try {
+            // 1. Instancia o Jackson para ler o texto JSON
+            com.fasterxml.jackson.databind.ObjectMapper mapper = new com.fasterxml.jackson.databind.ObjectMapper();
 
-        //Pega esse JSON e envia para notificacoes
-        messagingTemplate.convertAndSend("/CanalBack/notificacoes", eventoDto);
+            // 2. Converte a String de volta para o seu Objeto DTO
+            br.com.desweb.trabalhodesweb.dto.EventoDTO eventoDTO = mapper.readValue(mensagemJson, br.com.desweb.trabalhodesweb.dto.EventoDTO.class);
 
+            // 3. CONTINUE O SEU CÓDIGO DAQUI PARA BAIXO usando o eventoDTO
+            // Exemplo: messagingTemplate.convertAndSend("/canalBack/eventos", eventoDTO);
+            System.out.println("Recebido e convertido com sucesso: " + eventoDTO.jogador());
+
+        } catch (com.fasterxml.jackson.core.JsonProcessingException e) {
+            System.err.println("Erro ao converter o JSON recebido da fila: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 }
