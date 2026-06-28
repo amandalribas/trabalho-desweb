@@ -21,7 +21,9 @@ export const NotificacoesPage = () => {
     <div className="mx-auto max-w-2xl px-4 py-6">
       <div className="mb-6 flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-semibold text-gray-800">Notificações</h1>
+          <h1 className="text-3xl font-bold text-verde-texto">
+          Notificações
+        </h1>
           <p className="text-sm text-gray-500 mt-1">
             Eventos recebidos nesta sessão — mais recentes primeiro.
           </p>
@@ -35,7 +37,7 @@ export const NotificacoesPage = () => {
 
       {notificacoes.length === 0 ? (
         <div className="rounded-lg border border-dashed border-gray-300 bg-gray-50 p-10 text-center text-gray-400">
-          <p className="text-4xl mb-3">🔕</p>
+          <p className="text-4xl mb-3"><i className="bi bi-bell-slash"></i></p>
           <p className="font-medium">Nenhuma notificação recebida ainda.</p>
           <p className="text-sm mt-1">
             As notificações aparecem aqui quando eventos ocorrem nos jogos.

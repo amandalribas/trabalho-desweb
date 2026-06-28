@@ -86,7 +86,7 @@ const GerenciarEventosPage = () => {
           setEventoEditando(null);
           reset();
         },
-      }
+      },
     );
   };
 
@@ -94,9 +94,8 @@ const GerenciarEventosPage = () => {
 
   return (
     <>
-      <h1 className="mb-1 text-xl font-semibold">Gerenciar Eventos</h1>
+      <h1 className="text-3xl font-bold text-verde-texto">Gerenciar eventos</h1>
       <hr className="mb-4" />
-
       {/* Formulário de edição inline */}
       {eventoEditando && (
         <div className="mb-6 rounded-md border-2 border-azul-background bg-white p-4">
@@ -158,8 +157,7 @@ const GerenciarEventosPage = () => {
 
               <div>
                 <label className="mb-1 block text-sm font-medium text-gray-700">
-                  Jogador{" "}
-                  <span className="text-gray-400">(opcional)</span>
+                  Jogador <span className="text-gray-400">(opcional)</span>
                 </label>
                 <input
                   {...register("jogador")}
@@ -188,12 +186,10 @@ const GerenciarEventosPage = () => {
           </form>
         </div>
       )}
-
       {/* Tabela de eventos */}
       {eventos && eventos.length === 0 && (
         <p className="text-gray-500">Nenhum evento cadastrado.</p>
       )}
-
       {eventos && eventos.length > 0 && (
         <table className="w-full text-sm">
           <thead className="bg-gray-100">
