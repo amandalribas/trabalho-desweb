@@ -6,43 +6,51 @@ import useNotificacaoStore from "../store/NotificacaoStore";
 import logo from "../assets/logo-fut.png";
 import { Client } from "@stomp/stompjs";
 
-
-const SockJS = require("sockjs-client/dist/sockjs.js");
-
-
 export const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const tokenResponse = useTokenStore((s) => s.tokenResponse);
   const [naoLidas, setNaoLidas] = useState(0);
   const addNotificacao = useNotificacaoStore((s) => s.addNotificacao);
 
-  //ESCUTAR RABBITMQ VIA WEBSOCKET EM SEGUNDO PLANO
   useEffect(() => {
-    const socket = new SockJS("http://localhost:8080/ws-server");
+    let isMounted = true;
+    let stompClient: Client | null = null;
 
-    const stompClient = new Client({
-      webSocketFactory: () => socket,
-      reconnectDelay: 5000,
-      onConnect: () => {
-        console.log("Conectou ao webSocket pelo react");
+    const connect = async () => {
+      (globalThis as typeof globalThis & { global?: typeof globalThis }).global = globalThis;
 
-        stompClient.subscribe("/CanalBack/notificacoes", (message) => {
-          if (message.body) {
-            const evento = JSON.parse(message.body);
-            setNaoLidas((prev) => prev + 1);
-            addNotificacao(evento);
-          }
-        });
-      },
-      onStompError: (frame) => {
-        console.error("Erro STOMP:", frame.headers["message"]);
-      },
+      const { default: SockJS } = await import("sockjs-client/dist/sockjs.js");
+      const socket = new SockJS("http://localhost:8080/ws-server");
+
+      stompClient = new Client({
+        webSocketFactory: () => socket as unknown as WebSocket,
+        reconnectDelay: 5000,
+        onConnect: () => {
+          if (!isMounted || !stompClient) return;
+
+          stompClient.subscribe("/CanalBack/notificacoes", (message) => {
+            if (message.body) {
+              const evento = JSON.parse(message.body);
+              setNaoLidas((prev) => prev + 1);
+              addNotificacao(evento);
+            }
+          });
+        },
+        onStompError: (frame) => {
+          console.error("Erro STOMP:", frame.headers["message"]);
+        },
+      });
+
+      stompClient.activate();
+    };
+
+    connect().catch((error) => {
+      console.error("Erro ao conectar websocket:", error);
     });
 
-    stompClient.activate();
-
     return () => {
-      if (stompClient) stompClient.deactivate();
+      isMounted = false;
+      stompClient?.deactivate();
     };
   }, [addNotificacao]);
 

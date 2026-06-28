@@ -15,7 +15,7 @@ const LABEL_EVENTO: Record<string, string> = {
 };
 
 export const NotificacoesPage = () => {
-  const { notificacoes, removerToast } = useNotificacaoStore();
+  const { notificacoes } = useNotificacaoStore();
 
   return (
     <div className="mx-auto max-w-2xl px-4 py-6">
