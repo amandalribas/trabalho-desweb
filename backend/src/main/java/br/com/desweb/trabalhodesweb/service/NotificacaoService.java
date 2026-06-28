@@ -24,9 +24,10 @@ public class NotificacaoService {
             // 2. Converte a String de volta para o seu Objeto DTO
             br.com.desweb.trabalhodesweb.dto.EventoDTO eventoDTO = mapper.readValue(mensagemJson, br.com.desweb.trabalhodesweb.dto.EventoDTO.class);
 
-            // 3. CONTINUE O SEU CÓDIGO DAQUI PARA BAIXO usando o eventoDTO
-            // Exemplo: messagingTemplate.convertAndSend("/canalBack/eventos", eventoDTO);
-            System.out.println("Recebido e convertido com sucesso: " + eventoDTO.jogador());
+            // 3. Envia a notificação para todos os clientes conectados no WebSocket
+            System.out.println("Recebido e convertido com sucesso: " + eventoDTO.tipoEvento());
+            messagingTemplate.convertAndSend("/CanalBack/notificacoes", eventoDTO);
+            System.out.println("Notificação enviada para o WebSocket: " + eventoDTO.tipoEvento());
 
         } catch (com.fasterxml.jackson.core.JsonProcessingException e) {
             System.err.println("Erro ao converter o JSON recebido da fila: " + e.getMessage());
