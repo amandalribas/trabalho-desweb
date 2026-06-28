@@ -1,5 +1,6 @@
 package br.com.desweb.trabalhodesweb.service;
 
+import br.com.desweb.trabalhodesweb.config.RabbitMQConfig;
 import br.com.desweb.trabalhodesweb.dto.EventoCreate;
 import br.com.desweb.trabalhodesweb.dto.EventoDTO;
 import br.com.desweb.trabalhodesweb.dto.JogoCreate;
@@ -11,6 +12,7 @@ import br.com.desweb.trabalhodesweb.repository.CompeticaoRepository;
 import br.com.desweb.trabalhodesweb.repository.EventoRepository;
 import br.com.desweb.trabalhodesweb.repository.JogoRepository;
 import br.com.desweb.trabalhodesweb.repository.TimeRepository;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -34,6 +36,8 @@ public class JogoService {
     private JogoMapper jogoMapper;
     @Autowired
     private EventoMapper eventoMapper;
+    @Autowired
+    private RabbitTemplate rabbitTemplate;
 
     public List<JogoDTO> listarJogos() {
         return jogoMapper.toJogosDTO(jogoRepository.findAll());
@@ -147,7 +151,7 @@ public class JogoService {
         evento.setTime(time);
         evento.setMinuto(calcularMinuto(jogo));
 
-        // Atualizar placar se for gol
+
         if (eventoCreate.tipoEvento() == TipoEvento.GOL) {
             if (time.getId().equals(jogo.getTimeA().getId())) {
                 jogo.setPlacarA(jogo.getPlacarA() + 1);
@@ -156,7 +160,7 @@ public class JogoService {
             }
             jogoRepository.save(jogo);
         } else if (eventoCreate.tipoEvento() == TipoEvento.GOL_CONTRA) {
-            // Gol contra: marca para o time adversário
+
             if (time.getId().equals(jogo.getTimeA().getId())) {
                 jogo.setPlacarB(jogo.getPlacarB() + 1);
             } else {
@@ -165,7 +169,18 @@ public class JogoService {
             jogoRepository.save(jogo);
         }
 
-        return eventoMapper.toEventoDTO(eventoRepository.save(evento));
+        EventoDTO eventoDTO = eventoMapper.toEventoDTO(eventoRepository.save(evento));
+
+        // CONVERSÃO MANUAL PARA STRING JSON AQUI:
+        try {
+            com.fasterxml.jackson.databind.ObjectMapper mapper = new com.fasterxml.jackson.databind.ObjectMapper();
+            String jsonNotificacao = mapper.writeValueAsString(eventoDTO);
+            rabbitTemplate.convertAndSend(RabbitMQConfig.EXCHANGE_EVENTOS, "eventos", jsonNotificacao);
+        } catch (com.fasterxml.jackson.core.JsonProcessingException e) {
+            e.printStackTrace();
+        }
+
+        return eventoDTO;
     }
 
     private Jogo encontrarJogo(Long id) {
@@ -178,7 +193,16 @@ public class JogoService {
         evento.setTipoEvento(tipo);
         evento.setJogo(jogo);
         evento.setMinuto(calcularMinuto(jogo));
-        eventoRepository.save(evento);
+        EventoDTO eventoDTO = eventoMapper.toEventoDTO(eventoRepository.save(evento));
+
+
+        try {
+            com.fasterxml.jackson.databind.ObjectMapper mapper = new com.fasterxml.jackson.databind.ObjectMapper();
+            String jsonNotificacao = mapper.writeValueAsString(eventoDTO);
+            rabbitTemplate.convertAndSend(RabbitMQConfig.EXCHANGE_EVENTOS, "eventos", jsonNotificacao);
+        } catch (com.fasterxml.jackson.core.JsonProcessingException e) {
+            e.printStackTrace();
+        }
     }
 
     private int calcularMinuto(Jogo jogo) {

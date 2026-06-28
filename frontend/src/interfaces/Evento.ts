@@ -5,6 +5,10 @@ export interface Evento {
   minuto: number | null;
   jogoId: number;
   jogoDescricao: string;
+  placarA: number;
+  placarB: number;
+  timeANome: string;
+  timeBNome: string;
   timeId: number;
   timeNome: string;
 }

@@ -84,7 +84,7 @@ public class TrabalhoDeswebApplication implements CommandLineRunner {
         }
         if (usuarioRepository.findByEmail("user@mail.com").isEmpty()) {
             Usuario user = new Usuario(
-                    "eu",
+                    "user",
                     "user@mail.com",
                     passwordEncoder.encode("desweb"),
                     Role.USER,

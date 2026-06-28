@@ -1,12 +1,60 @@
 import "bootstrap-icons/font/bootstrap-icons.min.css";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
 import useTokenStore from "../store/TokenStore";
+import useNotificacaoStore from "../store/NotificacaoStore";
 import logo from "../assets/logo-fut.png";
+import { Client } from "@stomp/stompjs";
 
 export const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const tokenResponse = useTokenStore((s) => s.tokenResponse);
+  const [naoLidas, setNaoLidas] = useState(0);
+  const addNotificacao = useNotificacaoStore((s) => s.addNotificacao);
+
+  useEffect(() => {
+    let isMounted = true;
+    let stompClient: Client | null = null;
+
+    const connect = async () => {
+      (
+        globalThis as typeof globalThis & { global?: typeof globalThis }
+      ).global = globalThis;
+
+      const { default: SockJS } = await import("sockjs-client/dist/sockjs.js");
+      const socket = new SockJS("http://localhost:8080/ws-server");
+
+      stompClient = new Client({
+        webSocketFactory: () => socket as unknown as WebSocket,
+        reconnectDelay: 5000,
+        onConnect: () => {
+          if (!isMounted || !stompClient) return;
+
+          stompClient.subscribe("/CanalBack/notificacoes", (message) => {
+            if (message.body) {
+              const evento = JSON.parse(message.body);
+              setNaoLidas((prev) => prev + 1);
+              addNotificacao(evento);
+            }
+          });
+        },
+        onStompError: (frame) => {
+          console.error("Erro STOMP:", frame.headers["message"]);
+        },
+      });
+
+      stompClient.activate();
+    };
+
+    connect().catch((error) => {
+      console.error("Erro ao conectar websocket:", error);
+    });
+
+    return () => {
+      isMounted = false;
+      stompClient?.deactivate();
+    };
+  }, [addNotificacao]);
 
   return (
     <nav className="bg-amarelo-background mb-6 py-4">
@@ -27,15 +75,6 @@ export const Navbar = () => {
             >
               <i className="bi bi-house me-1"></i>
               Home
-            </NavLink>
-
-            <NavLink
-              className="hidden text-branco-texto hover:text-verde-texto md:block"
-              aria-current="page"
-              to="/eventos"
-            >
-              <i className="bi bi-calendar-event me-1"></i>
-              Eventos
             </NavLink>
 
             {/* ELEMTENTOS DA NAVBAR QUE VARIAM DEPENDENDO DO TIPO DO USUÁRIO O PADRÃO É A DO USER PADRÃO (else) */}
@@ -83,10 +122,17 @@ export const Navbar = () => {
                   <i className="bi bi-shield-plus me-1"></i>
                   Criar Times
                 </NavLink>
-
               </>
             ) : (
               <>
+                <NavLink
+                  className="hidden text-branco-texto hover:text-verde-texto md:block"
+                  aria-current="page"
+                  to="/eventos"
+                >
+                  <i className="bi bi-calendar-event me-1"></i>
+                  Eventos
+                </NavLink>
                 <NavLink
                   className="hidden text-branco-texto hover:text-verde-texto md:block"
                   aria-current="page"
@@ -104,12 +150,17 @@ export const Navbar = () => {
                   Meus Times
                 </NavLink>
                 <NavLink
-                  className="hidden text-branco-texto hover:text-verde-texto md:block"
-                  aria-current="page"
+                  className="hidden text-branco-texto hover:text-verde-texto md:flex items-center relative"
                   to="/notificacoes"
+                  onClick={() => setNaoLidas(0)}
                 >
-                  <i className="bi bi-bell  me-1"></i>
+                  <i className="bi bi-bell me-1"></i>
                   Notificações
+                  {naoLidas > 0 && (
+                    <span className="absolute -top-1 -right-3 bg-red-600 text-white rounded-full text-[10px] font-bold px-1.5 py-0.5 animate-pulse">
+                      {naoLidas}
+                    </span>
+                  )}
                 </NavLink>
               </>
             )}
@@ -141,7 +192,6 @@ export const Navbar = () => {
                 : "border border-verde-texto")
             }
           >
-            {/* Use um ícone de hambúrguer aqui */}
             <svg
               className="h-6 w-6"
               fill="none"
@@ -170,15 +220,6 @@ export const Navbar = () => {
               Home
             </NavLink>
 
-            <NavLink
-              className="text-branco-texto hover:text-verde-texto"
-              aria-current="page"
-              to="/eventos"
-              onClick={() => setIsOpen(false)}
-            >
-              <i className="bi bi-calendar-event me-1"></i>
-              Eventos
-            </NavLink>
             {tokenResponse.role == "ADMIN" ? (
               <>
                 <NavLink
@@ -212,16 +253,24 @@ export const Navbar = () => {
                 <NavLink
                   className=" text-branco-texto hover:text-verde-texto md:block"
                   aria-current="page"
-                  to="/cadastrar-times"
+                  to="/criar-time"
                   onClick={() => setIsOpen(false)}
                 >
                   <i className="bi bi-shield-plus  me-1"></i>
-                  Cad. Times
+                  Criar Times
                 </NavLink>
-
               </>
             ) : (
               <>
+                <NavLink
+                  className="text-branco-texto hover:text-verde-texto"
+                  aria-current="page"
+                  to="/eventos"
+                  onClick={() => setIsOpen(false)}
+                >
+                  <i className="bi bi-calendar-event me-1"></i>
+                  Eventos
+                </NavLink>
                 <NavLink
                   className="text-branco-texto hover:text-verde-texto"
                   aria-current="page"
@@ -241,13 +290,17 @@ export const Navbar = () => {
                   Meus Times
                 </NavLink>
                 <NavLink
-                  className="text-branco-texto hover:text-verde-texto"
-                  aria-current="page"
+                  className=" text-branco-texto hover:text-verde-texto flex items-center relative"
                   to="/notificacoes"
-                  onClick={() => setIsOpen(false)}
+                  onClick={() => setNaoLidas(0)}
                 >
                   <i className="bi bi-bell me-1"></i>
                   Notificações
+                  {naoLidas > 0 && (
+                    <span className="absolute -top-1 -right-3 bg-red-600 text-white rounded-full text-[10px] font-bold px-1.5 py-0.5 animate-pulse">
+                      {naoLidas}
+                    </span>
+                  )}
                 </NavLink>
               </>
             )}

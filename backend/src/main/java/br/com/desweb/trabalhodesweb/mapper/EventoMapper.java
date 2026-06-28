@@ -12,6 +12,10 @@ public interface EventoMapper {
 
     @Mapping(source = "jogo.id", target = "jogoId")
     @Mapping(source = "jogo.descricao", target = "jogoDescricao")
+    @Mapping(source = "jogo.placarA", target = "placarA")
+    @Mapping(source = "jogo.placarB", target = "placarB")
+    @Mapping(source = "jogo.timeA.nome", target = "timeANome")
+    @Mapping(source = "jogo.timeB.nome", target = "timeBNome")
     @Mapping(source = "time.id", target = "timeId")
     @Mapping(source = "time.nome", target = "timeNome")
     EventoDTO toEventoDTO(Evento evento);
