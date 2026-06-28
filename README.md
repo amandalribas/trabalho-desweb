@@ -11,3 +11,7 @@ senha: desweb
 
 email: user@mail.com
 senha: desweb
+
+Para Windows, é necessária a instalação do Docker.
+Ao ter o docker instalado. Faça no cmd: 
+docker run -d --hostname rmq --name rabbitmq-server -p 15672:15672 -p 5672:5672 rabbitmq:3-management
