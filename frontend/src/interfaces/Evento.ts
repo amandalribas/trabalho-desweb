@@ -7,7 +7,9 @@ export interface Evento {
   jogoDescricao: string;
   placarA: number;
   placarB: number;
+  timeAId: number;
   timeANome: string;
+  timeBId: number;
   timeBNome: string;
   timeId: number;
   timeNome: string;

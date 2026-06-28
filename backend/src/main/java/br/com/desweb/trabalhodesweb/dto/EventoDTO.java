@@ -11,7 +11,9 @@ public record EventoDTO(
         String jogoDescricao,
         int placarA,
         int placarB,
+        Long timeAId,
         String timeANome,
+        Long timeBId,
         String timeBNome,
         Long timeId,
         String timeNome

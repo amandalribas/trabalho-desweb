@@ -1,8 +1,9 @@
 import "bootstrap-icons/font/bootstrap-icons.min.css";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { NavLink } from "react-router-dom";
 import useTokenStore from "../store/TokenStore";
 import useNotificacaoStore from "../store/NotificacaoStore";
+import useListarTimesUser from "../hooks/user/useListarTimesUser";
 import logo from "../assets/logo-fut.png";
 import { Client } from "@stomp/stompjs";
 
@@ -11,6 +12,12 @@ export const Navbar = () => {
   const tokenResponse = useTokenStore((s) => s.tokenResponse);
   const [naoLidas, setNaoLidas] = useState(0);
   const addNotificacao = useNotificacaoStore((s) => s.addNotificacao);
+  const { data: timesUser } = useListarTimesUser();
+  const timesUserIdsRef = useRef<Set<number>>(new Set());
+
+  useEffect(() => {
+    timesUserIdsRef.current = new Set(timesUser?.map((t) => t.id) ?? []);
+  }, [timesUser]);
 
   useEffect(() => {
     let isMounted = true;
@@ -33,8 +40,11 @@ export const Navbar = () => {
           stompClient.subscribe("/CanalBack/notificacoes", (message) => {
             if (message.body) {
               const evento = JSON.parse(message.body);
-              setNaoLidas((prev) => prev + 1);
-              addNotificacao(evento);
+              const userTeams = timesUserIdsRef.current;
+              if (userTeams.has(evento.timeAId) || userTeams.has(evento.timeBId)) {
+                setNaoLidas((prev) => prev + 1);
+                addNotificacao(evento);
+              }
             }
           });
         },
