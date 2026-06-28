@@ -45,7 +45,9 @@ const useTimer = (iniciadoEm: string | null, status: string) => {
     return () => clearInterval(id);
   }, [iniciadoEm, status]);
 
-  const m = Math.floor(seg / 60).toString().padStart(2, "0");
+  const m = Math.floor(seg / 60)
+    .toString()
+    .padStart(2, "0");
   const s = (seg % 60).toString().padStart(2, "0");
   return `${m}:${s}`;
 };
@@ -112,10 +114,7 @@ const CardJogo = ({ jogo }: { jogo: Jogo }) => {
           ) : (
             <ul className="space-y-1">
               {[...eventos].reverse().map((ev) => (
-                <li
-                  key={ev.id}
-                  className="flex items-center gap-2 text-sm"
-                >
+                <li key={ev.id} className="flex items-center gap-2 text-sm">
                   <span className="w-8 text-right font-mono text-xs text-gray-400">
                     {ev.minuto && ev.minuto > 0 ? `${ev.minuto}'` : "—"}
                   </span>
@@ -147,7 +146,8 @@ const EmAndamentoPage = () => {
 
   return (
     <>
-      <h1 className="mb-1 text-xl font-semibold">Jogos</h1>
+      <h1 className="text-3xl font-bold text-verde-texto">Jogos em andamento</h1>
+      <br/>
       <hr className="mb-4" />
 
       {ordenados.length === 0 && (

@@ -32,7 +32,9 @@ const EventosPage = () => {
   if (tokenResponse.idUsuario <= 0) {
     return (
       <div className="mx-auto max-w-6xl px-4 py-6">
-        <h1 className="mb-1 text-2xl font-semibold text-gray-800">Eventos</h1>
+        <h1 className="text-3xl font-bold text-verde-texto">
+          Eventos
+        </h1>
         <p className="text-gray-500">
           Faça login para ver eventos dos times que você acompanha.
         </p>
@@ -57,10 +59,10 @@ const EventosPage = () => {
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-6">
-      <h1 className="mb-1 text-2xl font-semibold text-gray-800">Eventos</h1>
-      <p className="mb-6 text-sm text-gray-500">
-        Eventos mais recentes primeiro.
-      </p>
+      <h1 className="text-3xl font-bold text-verde-texto">
+          Eventos
+        </h1>
+
 
       {eventosOrdenados.length === 0 && (
         <p className="text-gray-500">Nenhum evento encontrado.</p>

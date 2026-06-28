@@ -333,7 +333,9 @@ const AtualizarJogoPage = () => {
     <>
       <div className="mb-4 flex items-center justify-between">
         <div>
-          <h1 className="mb-1 text-xl font-semibold">Gerenciar Jogos</h1>
+          <h1 className="text-3xl font-bold text-verde-texto">
+          Atualizar jogos
+        </h1>
           <hr />
         </div>
         <Link
