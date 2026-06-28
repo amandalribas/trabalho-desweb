@@ -55,6 +55,13 @@ public class JogoService {
         Competicao competicao = competicaoRepository.findById(jogoCreate.competicaoId())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Competição não encontrada"));
 
+        if (!competicao.getTimes().contains(timeA)){
+            competicao.getTimes().add(timeA);
+        }
+        if (!competicao.getTimes().contains(timeB)){
+            competicao.getTimes().add(timeB);
+        }
+
         Jogo jogo = new Jogo();
         jogo.setTimeA(timeA);
         jogo.setTimeB(timeB);
@@ -74,6 +81,13 @@ public class JogoService {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Time B não encontrado"));
         Competicao competicao = competicaoRepository.findById(jogoCreate.competicaoId())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Competição não encontrada"));
+
+        if (!competicao.getTimes().contains(timeA)){
+            competicao.getTimes().add(timeA);
+        }
+        if (!competicao.getTimes().contains(timeB)){
+            competicao.getTimes().add(timeB);
+        }
 
         jogo.setTimeA(timeA);
         jogo.setTimeB(timeB);

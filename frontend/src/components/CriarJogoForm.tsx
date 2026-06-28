@@ -99,7 +99,7 @@ const CriarJogoForm = () => {
               <option value={0}>Selecione a competição</option>
               {competicoes?.map((c) => (
                 <option key={c.id} value={c.id}>
-                  Competição {c.id}
+                  {c.nome}
                 </option>
               ))}
             </select>

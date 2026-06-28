@@ -9,8 +9,6 @@ import java.util.List;
 
 public record CompeticaoCreate (
     String nome,
-    List<Long> jogosIds,
-    List<Long> timesIds,
     Date dataInicio,
     Date dataFim
 ) {
